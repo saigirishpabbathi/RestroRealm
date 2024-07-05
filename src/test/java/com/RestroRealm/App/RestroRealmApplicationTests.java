@@ -1,0 +1,13 @@
+package com.RestroRealm.App;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class RestroRealmApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
