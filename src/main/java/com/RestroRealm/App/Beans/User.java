@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -12,7 +14,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
     @Column(name = "user_id", updatable = false)
-    private Integer userId;
+    private Long userId;
 
     @JsonProperty
     @Column(name = "username")
@@ -35,15 +37,25 @@ public class User {
     private String password;
 
     @JsonProperty
-    @Column(name = "created_date")
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "role_id",
+            foreignKey = @ForeignKey(name = "users_ibfk_1"))
+    private Role roleId;
+
+    @JsonProperty
+    @Column(name = "created_date", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar createdDate;
 
-    public Integer getUserId() {
+    @JsonProperty
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RolePermissions> rolePermissions;
+
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -87,6 +99,14 @@ public class User {
         this.password = password;
     }
 
+    public Role getRole() {
+        return roleId;
+    }
+
+    public void setRole(Role role) {
+        this.roleId = roleId;
+    }
+
     public Calendar getCreatedDate() {
         return createdDate;
     }
@@ -99,13 +119,14 @@ public class User {
         }
     }
 
-    public User(Integer userId, String username, String firstName, String lastName, String email, String password, Calendar createdDate) {
+    public User(Long userId, String username, String firstName, String lastName, String email, String password, Role roleId, Calendar createdDate) {
         this.userId = userId;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.roleId = roleId;
         this.createdDate = createdDate;
     }
 
