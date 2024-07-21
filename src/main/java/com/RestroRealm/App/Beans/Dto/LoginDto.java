@@ -1,6 +1,6 @@
 package com.RestroRealm.App.Beans.Dto;
 
-public class AuthRequest {
+public class LoginDto {
     private String username;
     private String password;
 

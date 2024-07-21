@@ -7,6 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService extends UserDetailsService {
     String login(String username, String password)  throws AuthenticationException;
 
-    User createUser(User user);
+    User createUser(User user) throws Exception;
 }
 

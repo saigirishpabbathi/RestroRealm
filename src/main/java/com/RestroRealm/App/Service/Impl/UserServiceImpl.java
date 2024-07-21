@@ -29,9 +29,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Fetch user from database or other source
-        // For example, you might use a UserRepository to fetch the user
-        // Assuming a User entity with fields `username` and `password`
         User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
@@ -43,17 +40,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public String login(String username, String password) throws AuthenticationException {
         User user = userRepository.findByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
-            // Generate and return JWT token upon successful authentication
-            return jwtUtil.generateToken(username);
+            return jwtUtil.generateToken(user);
         } else {
             throw new BadCredentialsException("Invalid username or password");
         }
     }
 
     @Override
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User createdUser = userRepository.save(user);
-        return createdUser;
+    public User createUser(User user) throws Exception {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User createdUser = userRepository.save(user);
+            return createdUser;
+        } catch (Exception e) {
+            throw new Exception("User registration failed");
+        }
     }
 }
