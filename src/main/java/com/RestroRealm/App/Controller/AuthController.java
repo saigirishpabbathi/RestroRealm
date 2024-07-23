@@ -2,12 +2,10 @@ package com.RestroRealm.App.Controller;
 
 import com.RestroRealm.App.Beans.Dto.LoginDto;
 import com.RestroRealm.App.Beans.User;
-import com.RestroRealm.App.Security.JwtUtil;
 import com.RestroRealm.App.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
