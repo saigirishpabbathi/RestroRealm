@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 @Entity
 @Table(name = "permissions")
-public class Permissions {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty
@@ -134,12 +134,12 @@ public class Permissions {
         }
     }
 
-    public Permissions() {
+    public Permission() {
     }
 
-    public Permissions(Long permissionId, String permissionName, String permissionDescription, PermissionStatus status,
-                       PermissionType permissionType, User createdBy, User updatedBy, Calendar createdDate,
-                       Calendar updatedDate) {
+    public Permission(Long permissionId, String permissionName, String permissionDescription, PermissionStatus status,
+                      PermissionType permissionType, User createdBy, User updatedBy, Calendar createdDate,
+                      Calendar updatedDate) {
         this.permissionId = permissionId;
         this.permissionName = permissionName;
         this.permissionDescription = permissionDescription;
