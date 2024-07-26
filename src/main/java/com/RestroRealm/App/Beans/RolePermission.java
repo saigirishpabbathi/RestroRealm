@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 @Entity
 @Table(name = "role_permissions")
-public class RolePermissions {
+public class RolePermission {
 
     @JsonProperty
     @Column(name = "role_permission_id")
@@ -25,7 +25,7 @@ public class RolePermissions {
     @ManyToOne
     @JoinColumn(name = "permission_id", referencedColumnName = "permission_id",
             foreignKey = @ForeignKey(name = "fk_permission_rp"))
-    private Permissions permission;
+    private Permission permission;
 
     @JsonProperty
     @ManyToOne
@@ -71,11 +71,11 @@ public class RolePermissions {
         this.role = role;
     }
 
-    public Permissions getPermission() {
+    public Permission getPermission() {
         return permission;
     }
 
-    public void setPermission(Permissions permission) {
+    public void setPermission(Permission permission) {
         this.permission = permission;
     }
 
@@ -127,10 +127,10 @@ public class RolePermissions {
         }
     }
 
-    public RolePermissions() {
+    public RolePermission() {
     }
 
-    public RolePermissions(Long rolePermissionId, Role role, Permissions permission, User user, User createdBy, User updatedBy, Calendar createdDate, Calendar updatedDate) {
+    public RolePermission(Long rolePermissionId, Role role, Permission permission, User user, User createdBy, User updatedBy, Calendar createdDate, Calendar updatedDate) {
         this.rolePermissionId = rolePermissionId;
         this.role = role;
         this.permission = permission;
