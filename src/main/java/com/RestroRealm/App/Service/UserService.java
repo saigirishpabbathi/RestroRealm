@@ -8,7 +8,5 @@ public interface UserService extends UserDetailsService {
     String login(String username, String password)  throws AuthenticationException;
 
     User createUser(User user) throws Exception;
-
-    User getUserById(Long userId);
 }
 
