@@ -11,15 +11,15 @@ import java.util.Optional;
 public interface RolePermissionRepository extends JpaRepository<RolePermission, Long> {
     Optional<RolePermission> findByRolePermissionId(Long rolePermissionId);
 
-    List<RolePermission> findByRoleId(Long roleId);
+    List<RolePermission> findByRoleRoleId(Long roleId);
 
-    List<RolePermission> findByUserId(Long userId);
+    List<RolePermission> findByUserUserId(Long userId);
 
-    List<RolePermission> findByPermissionId(Long userId);
+    List<RolePermission> findByPermissionPermissionId(Long userId);
 
-    List<RolePermission> findByRoleIdAndUserId(Long roleId, Long userId);
+    List<RolePermission> findByRoleRoleIdAndUserUserId(Long roleId, Long userId);
 
-    List<RolePermission> findByRoleIdOrUserId(Long roleId, Long userId);
+    List<RolePermission> findByRoleRoleIdOrUserUserId(Long roleId, Long userId);
 
-    Optional<RolePermission> findByRoleIdAndPermissionId(Long roleId, Long permissionId);
+    Optional<RolePermission> findByRoleRoleIdAndPermissionPermissionId(Long roleId, Long permissionId);
 }
