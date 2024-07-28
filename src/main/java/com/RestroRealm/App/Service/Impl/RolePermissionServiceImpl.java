@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RolePermissionImpl implements RolePermissionService {
+public class RolePermissionServiceImpl implements RolePermissionService {
 
     @Autowired
     private RolePermissionRepository rolePermissionRepository;
@@ -102,7 +102,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public List<RolePermission> getByUserId(Long userId) throws Exception {
         try {
-            return rolePermissionRepository.findByUserId(userId);
+            return rolePermissionRepository.findByUserUserId(userId);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by userId "+ e.getMessage());
         }
@@ -111,7 +111,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public List<RolePermission> getByPermissionId(Long permissionId) throws Exception {
         try {
-            return rolePermissionRepository.findByPermissionId(permissionId);
+            return rolePermissionRepository.findByPermissionPermissionId(permissionId);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by permissionId "+ e.getMessage());
         }
@@ -120,7 +120,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public List<RolePermission> getByRoleId(Long roleId) throws Exception {
         try {
-            return rolePermissionRepository.findByRoleId(roleId);
+            return rolePermissionRepository.findByRoleRoleId(roleId);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by roleId "+ e.getMessage());
         }
@@ -129,7 +129,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public List<RolePermission> getByRoleIdAndUserId(Long roleId, Long userId) throws Exception {
         try {
-            return rolePermissionRepository.findByRoleIdAndUserId(roleId, userId);
+            return rolePermissionRepository.findByRoleRoleIdAndUserUserId(roleId, userId);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by userId and roleId "+ e.getMessage());
         }
@@ -138,7 +138,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public List<RolePermission> getByRoleIdOrUserId(Long roleId, Long userId) throws Exception {
         try {
-            return rolePermissionRepository.findByRoleIdOrUserId(roleId, userId);
+            return rolePermissionRepository.findByRoleRoleIdOrUserUserId(roleId, userId);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by userId and roleId "+ e.getMessage());
         }
@@ -147,7 +147,7 @@ public class RolePermissionImpl implements RolePermissionService {
     @Override
     public RolePermission getByRoleIdAndPermissionId(Long roleId, Long permissionId) throws Exception {
         try {
-            return rolePermissionRepository.findByRoleIdAndPermissionId(roleId, permissionId).orElse(null);
+            return rolePermissionRepository.findByRoleRoleIdAndPermissionPermissionId(roleId, permissionId).orElse(null);
         } catch (Exception e){
             throw new Exception("Unable to get Role Permissions by userId and roleId "+ e.getMessage());
         }
