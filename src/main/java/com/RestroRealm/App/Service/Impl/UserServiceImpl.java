@@ -49,24 +49,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User createUser(User user) throws Exception {
         try {
-            User existingUser = userRepository.findByUsername(user.getUsername());
-            if(existingUser == null || existingUser.equals(null)) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                User createdUser = userRepository.save(user);
-                return createdUser;
-            } else if(existingUser.getEmail().equalsIgnoreCase(user.getEmail())) {
-                throw  new Exception("User with same email exists already.");
-            } else if(existingUser.getUsername().equalsIgnoreCase(user.getUsername())) {
-                throw  new Exception("User with same username exists already.");
-            }
-            throw new Exception("Something went wrong, Unable to register user");
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User createdUser = userRepository.save(user);
+            return createdUser;
         } catch (Exception e) {
             throw new Exception("User registration failed");
         }
-    }
-
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findByUserId(userId).orElse(null);
     }
 }

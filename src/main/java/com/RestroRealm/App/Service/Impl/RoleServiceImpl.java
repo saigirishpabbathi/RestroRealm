@@ -4,12 +4,10 @@ import com.RestroRealm.App.Beans.Role;
 import com.RestroRealm.App.Repository.RoleRepository;
 import com.RestroRealm.App.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -36,8 +34,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public String deleteRole(Long roleId) throws Exception {
-        Role existingRole = findByRoleId(roleId);
+    public String deleteRole(Role role) throws Exception {
+        Role existingRole = findByRoleId(role.getRoleId());
         if(existingRole == null) {
             throw new Exception("Role does not exists");
         }
