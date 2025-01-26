@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.service.Impl;
 
+import com.letusbuild.restrorealm.dto.PermissionDto;
 import com.letusbuild.restrorealm.dto.UserDto;
 import com.letusbuild.restrorealm.entity.User;
 import com.letusbuild.restrorealm.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +51,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        return modelMapper.map(getUserEntityById(userId), UserDto.class);
+        User user = getUserEntityById(userId);
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setPermissionDtoSet(
+                user.getRole().getPermissions().stream()
+                        .map(permission -> modelMapper.map(permission, PermissionDto.class))
+                        .collect(Collectors.toSet()));
+        return userDto;
     }
 }
 

@@ -9,4 +9,6 @@ public interface AuthenticationService {
     AuthResponseDto login(LoginDto login);
     UserDto signUp(SignUpDto signup);
     AuthResponseDto generateAccessToken(String refreshToken);
+
+    UserDto validateToken(String accessToken);
 }

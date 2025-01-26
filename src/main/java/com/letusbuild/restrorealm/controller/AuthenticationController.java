@@ -13,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
@@ -48,6 +46,11 @@ public class AuthenticationController {
                 .map(cookie -> cookie.getValue())
                 .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found"));
         return ResponseEntity.ok(authenticationService.generateAccessToken(refreshToken));
+    }
+
+    @GetMapping("/validate/{accessToken}")
+    public ResponseEntity<UserDto> validate(@PathVariable String accessToken){
+        return ResponseEntity.ok(authenticationService.validateToken(accessToken));
     }
 
 }

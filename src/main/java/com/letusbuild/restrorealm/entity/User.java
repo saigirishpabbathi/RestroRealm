@@ -28,7 +28,7 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
     @Column(nullable = false)
-    private String passcode;
+    private String password;
 
     private boolean enabled = true;
 
@@ -44,7 +44,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.passcode;
+        return this.password;
     }
 
     @Override

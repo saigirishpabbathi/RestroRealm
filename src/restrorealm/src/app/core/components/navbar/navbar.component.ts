@@ -1,27 +1,42 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Injectable, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { Subscription } from 'rxjs';
+import { User } from '../../../shared/models/user.model';
+import { SidebarComponent } from "../sidebar/sidebar.component";
+import { SidebarService } from '../../services/sidebar/sidebar.service';
+
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, SidebarComponent],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
+  standalone: true,
+})
+@Injectable({
+  providedIn: 'root',
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn = false;
-  isSidebarOpen = false;
+  isSidebarOpen = true;
   showProfileDropdown = false;
-  user = {
-    name: '',
-    role: '',
-    profilePicture: ''
-  };
+  user: User | null = null;
+  private authSubscription?: Subscription;
+  private sidebarSubscription?: Subscription;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private sidebarService: SidebarService
+  ) {}
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    this.sidebarService.toggle();
+  }
+  closeSidebar() {
+    this.sidebarService.close();
   }
 
   toggleProfileDropdown() {
@@ -29,7 +44,8 @@ export class NavbarComponent implements OnInit {
   }
 
   onLogout() {
-    console.log('User logged out');
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   viewProfile() {
@@ -50,5 +66,35 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.authSubscription = this.authService.isLoggedIn$.subscribe({
+      next: (isLoggedIn) => {
+        this.isLoggedIn = isLoggedIn;
+      },
+      error: (error) => {
+        console.error('Auth subscription error:', error);
+        this.isLoggedIn = false;
+      }
+    });
+  
+    this.sidebarSubscription = this.sidebarService.isOpen$.subscribe({
+      next: (isOpen) => {
+        this.isSidebarOpen = isOpen;
+      },
+      error: (error) => {
+        console.error('Sidebar subscription error:', error);
+      }
+    });
+  
+    this.user = this.authService.getUserInfo();
+  }
+
+  ngOnDestroy(): void {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+    if (this.sidebarSubscription) {
+      this.sidebarSubscription.unsubscribe();
+    }
+  }
 }

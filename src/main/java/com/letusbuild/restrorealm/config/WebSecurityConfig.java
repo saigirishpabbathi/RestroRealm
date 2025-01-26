@@ -43,7 +43,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(List.of("http://localhost:3000")); // Frontend origin
+                            config.setAllowedOrigins(List.of("http://localhost:4200")); // Frontend origin
                             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // HTTP methods
                             config.setAllowedHeaders(List.of("*")); // Allow all headers
                             config.setAllowCredentials(true); // Allow cookies or Authorization headers
@@ -60,7 +60,7 @@ public class WebSecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://localhost:4200")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

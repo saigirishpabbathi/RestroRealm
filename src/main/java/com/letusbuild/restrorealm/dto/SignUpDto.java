@@ -17,7 +17,7 @@ public class SignUpDto {
 
     @NotBlank(message = "Password cannot be empty")
     @Size(min = 8, message = "Password must be at least 8 characters long")
-    private String passcode;
+    private String password;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")

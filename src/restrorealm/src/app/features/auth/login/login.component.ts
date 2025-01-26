@@ -1,27 +1,36 @@
-import { Component, NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ToasterComponent } from '../../../shared/components/toaster/toaster.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth/auth.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ToasterComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    ToasterComponent,
+    RouterLink
+  ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
   loading = false;
-  toast: { 
-    message: string; 
-    type: 'success' | 'error' 
+  toast: {
+    message: string;
+    type: 'success' | 'error';
   } | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -37,31 +46,32 @@ export class LoginComponent {
     return this.loginForm.get('password');
   }
 
-  navigate(route: string) {
-    this.router.navigate([route]).then(() => {
-      console.log('Navigated to login page');
-    });
-  }
-
   handleLogin() {
     if (this.loginForm.invalid) {
+      this.toast = { message: 'Please fill all required fields correctly.', type: 'error' };
       return;
     }
 
     this.loading = true;
 
-    setTimeout(() => {
+    this.authService.login(this.email?.value, this.password?.value).subscribe({
+      next: () => {
+      this.toast = { message: 'Login successful!', type: 'success' };
+      setTimeout(() => {
+        this.toast = null;
+        this.router.navigate(['/dashboard']);
+      }, 3000);
+      },
+      error: () => {
+      this.toast = { message: 'Invalid credentials.', type: 'error' };
+      setTimeout(() => {
+        this.toast = null;
+      }, 3000);
       this.loading = false;
-      if (
-        this.loginForm.value.email === 'test@example.com' &&
-        this.loginForm.value.password === 'password'
-      ) {
-        this.toast = { message: 'Login successful!', type: 'success' };
-      } else {
-        this.toast = { message: 'Invalid credentials.', type: 'error' };
-      }
-
-      setTimeout(() => (this.toast = null), 3000);
-    }, 2000);
+      },
+      complete: () => {
+      this.loading = false;
+      },
+    });
   }
 }

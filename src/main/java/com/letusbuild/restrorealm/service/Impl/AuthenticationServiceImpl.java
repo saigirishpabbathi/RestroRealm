@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthResponseDto login(LoginDto login) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPasscode()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
         User user = (User) authentication.getPrincipal();
         String accessToken = jwtService.generateJwtAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -46,15 +46,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public UserDto signUp(SignUpDto signup) {
-        Role role = roleRepository.findById(signup.getRoleId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
+        Role role = new Role();
+        if(signup.getRoleId() == -1){
+            role = roleRepository.findByName("User").orElseThrow(() -> new RuntimeException("No user role found"));
+        } else {
+            role = roleRepository.findById(signup.getRoleId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
+        }
         Optional<User> user = userService.getUserByEmail(signup.getEmail());
         if(user.isPresent()){
             throw new BadCredentialsException("User already exists with email " + signup.getEmail());
         }
 
         User newUser = modelMapper.map(signup, User.class);
-        newUser.setPasscode(passwordEncoder.encode(signup.getPasscode()));
+        newUser.setPassword(passwordEncoder.encode(signup.getPassword()));
         newUser.setRole(role);
         User savedUser = userService.createUser(newUser);
         return modelMapper.map(savedUser, UserDto.class);
@@ -66,5 +71,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userService.getUserEntityById(userId);
         String accessToken = jwtService.generateJwtAccessToken(user);
         return new AuthResponseDto(userId, accessToken, refreshToken);
+    }
+
+    @Override
+    public UserDto validateToken(String accessToken) {
+        Long userId = jwtService.getUserIdFromToken(accessToken);
+        return userService.getUserById(userId);
     }
 }

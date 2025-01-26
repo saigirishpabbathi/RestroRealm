@@ -14,13 +14,6 @@
     align-items: center;
 }
 
-.hamburger-menu {
-    font-size: 24px;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
 .app-name {
     font-size: 24px;
     font-weight: bold;
@@ -154,60 +147,30 @@
 .sidebar {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 250px;
+    left: -300px;
     height: 100%;
-    background: #fff;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transform: translateX(-100%);
-    transition: transform 0.3s;
+    color: white;
+    overflow-y: auto;
+    transition: left 0.3s ease;
     z-index: 1000;
-}
-
-.sidebar.open {
-    transform: translateX(0);
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-}
-
-.close-sidebar {
-    font-size: 24px;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  .hamburger-menu {
+    position: relative;
+    z-index: 1000;
     background: none;
     border: none;
+    font-size: 24px;
     cursor: pointer;
-}
-
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar-menu li {
-    padding: 10px 20px;
-}
-
-.sidebar-menu li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
     transition: color 0.3s;
 }
 
-.sidebar-menu li a:hover {
-    color: #0073e6;
-}
-
-@media screen and (min-width: 768px) {
-    .hamburger-menu {
-        display: none;
-    }
-
-    .sidebar {
-        display: none;
-    }
-    
+.hamburger-menu:hover {
+    color: #007bff;
 }
