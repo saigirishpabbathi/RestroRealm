@@ -1,10 +1,9 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { User } from '../../../shared/models/user.model';
-import { access } from 'fs';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +50,24 @@ export class AuthService {
 
   getUserInfo(): User | null {
     return this.userSubject.value;
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  getRefreshToken(): string | null {
+      return localStorage.getItem('refreshToken');
+  }
+
+  refreshAccessToken(refreshToken: string) {
+      return this.http.post<{ accessToken: string }>(`${this.apiUrl}/auth/refresh`, {
+          refreshToken,
+      }).pipe(
+          tap((response) => {
+              localStorage.setItem('accessToken', response.accessToken);
+          })
+      );
   }
 
   login(email: string, password: string): Observable<any> {
@@ -111,5 +128,11 @@ export class AuthService {
 
   private setLoginStatus(status: boolean): void {
     this.isLoggedInSubject.next(status);
+  }
+
+  hasPermission(requiredPermission: string): boolean {
+    return this.userSubject.value?.permissionDtoSet?.some(
+        permission => permission.permissionCode === requiredPermission
+    ) ?? false;
   }
 }

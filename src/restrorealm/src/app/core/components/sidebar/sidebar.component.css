@@ -10,23 +10,22 @@
 .sidebar {
     width: 250px;
     height: 100vh;
-    background: #1a1a1a;
+    background: #343a40;
     color: #fff;
-    transition: transform 0.3s ease; /* Use transform for smoother animations */
+    transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 999; /* Ensure it's below the navbar or hamburger menu */
-    transform: translateX(-100%); /* Default state - hidden */
+    z-index: 999;
+    transform: translateX(-100%);
 }
 
 .sidebar.expanded {
-    transform: translateX(0); /* When expanded */
+    transform: translateX(0);
 }
 
-/* Overlay for when the sidebar is active */
 .sidebar-overlay {
     position: fixed;
     top: 0;
@@ -34,7 +33,7 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 998; /* Below the hamburger menu */
+    z-index: 998;
 }
 
 .sidebar.expanded {

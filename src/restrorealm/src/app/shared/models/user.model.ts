@@ -1,3 +1,4 @@
+import { Permission } from "./permission.model";
 
 export interface User {
 
@@ -13,5 +14,5 @@ export interface User {
 
     profilePicture?: string;
 
-    permissions?: string[];
+    permissionDtoSet?: Permission[];
 }

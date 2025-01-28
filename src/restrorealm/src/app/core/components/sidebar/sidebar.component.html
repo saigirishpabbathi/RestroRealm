@@ -2,9 +2,9 @@
 <aside class="sidebar" [class.expanded]="isExpanded">
     <div class="sidebar-header">
         <img src={{logoPath}} alt="RestroRealm" class="logo" />
-        <button class="toggle-btn" (click)="toggleSidebar()">
+        <!-- <button class="toggle-btn" (click)="toggleSidebar()">
             <i [class]="isExpanded ? 'fas fa-chevron-left' : 'fas fa-chevron-right'"></i>
-        </button>
+        </button> -->
     </div>
 
     <nav class="nav-menu">
@@ -13,12 +13,15 @@
             <span *ngIf="isExpanded">Dashboard</span>
         </a>
 
-        <a routerLink="/orders" routerLinkActive="active" class="nav-item">
+        <a *ngIf="readAllOrders" 
+            routerLink="/orders" 
+            routerLinkActive="active" 
+            class="nav-item">
             <i class="fas fa-receipt"></i>
             <span *ngIf="isExpanded">Orders</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin', 'manager'])" 
+        <a *ngIf="readAllMenuItems" 
            routerLink="/menu" 
            routerLinkActive="active" 
            class="nav-item">
@@ -26,7 +29,7 @@
             <span *ngIf="isExpanded">Menu</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin', 'manager', 'waiter'])" 
+        <a *ngIf="readAllTables" 
            routerLink="/tables" 
            routerLinkActive="active" 
            class="nav-item">
@@ -34,7 +37,7 @@
             <span *ngIf="isExpanded">Tables</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin', 'manager', 'staff'])" 
+        <a *ngIf="readAllReservations" 
            routerLink="/reservations" 
            routerLinkActive="active" 
            class="nav-item">
@@ -42,7 +45,7 @@
             <span *ngIf="isExpanded">Reservations</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin', 'manager', 'chef'])" 
+        <a *ngIf="readAllKitchenOrders" 
            routerLink="/kitchen" 
            routerLinkActive="active" 
            class="nav-item">
@@ -50,7 +53,7 @@
             <span *ngIf="isExpanded">Kitchen</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin'])" 
+        <a *ngIf="readAllStaff" 
            routerLink="/staff" 
            routerLinkActive="active" 
            class="nav-item">
@@ -58,7 +61,7 @@
             <span *ngIf="isExpanded">Staff</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin', 'manager'])" 
+        <a *ngIf="readAllReports" 
            routerLink="/reports" 
            routerLinkActive="active" 
            class="nav-item">
@@ -66,7 +69,7 @@
             <span *ngIf="isExpanded">Reports</span>
         </a>
 
-        <a *ngIf="hasPermission(['admin'])" 
+        <a *ngIf="readAllSettings" 
            routerLink="/settings" 
            routerLinkActive="active" 
            class="nav-item">
