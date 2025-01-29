@@ -1,7 +1,7 @@
 <div class="menu-container">
     <!-- Header Section -->
     <header class="menu-header">
-        <h1 class="menu-title">Menu Management</h1>
+        <h1 class="menu-title">Category Management</h1>
         <div class="menu-controls">
             <div class="search-container">
                 <span class="search-icon fas fa-search"></span>
@@ -10,85 +10,72 @@
                     class="search-input"
                     [(ngModel)]="searchTerm" 
                     (input)="onSearch()" 
-                    placeholder="Search menu items..."
-                    aria-label="Search menu items"
+                    placeholder="Search Categories..."
+                    aria-label="Search Categories"
                 />
             </div>
             <div class="controls-group">
                 <button 
-                    *ngIf="createMenuItem"
+                    *ngIf="createCategory"
                     class="mdc-button mdc-button--raised" 
                     (click)="openCreateDialog()">
                     <span class="mdc-button__label">
-                        <i class="fas fa-plus"></i> Add Item
+                        <i class="fas fa-plus"></i> Add Category
                     </span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Categories Filter -->
-    <nav class="category-filter">
-        <div class="category-scroll">
-            <button
-                *ngFor="let category of categories"
-                class="category-pill"
-                [class.active]="selectedCategory?.id === category.id"
-                (click)="filterByCategory(category)"
-                [attr.aria-label]="'Filter by ' + category.name">
-                {{ category.name }}
-                <span *ngIf="selectedCategory?.id === category.id" class="active-indicator"></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Menu Items Grid/List -->
     <main [class]="'item-container ' + viewMode">
         <article 
-            *ngFor="let item of filteredMenuItems"
+            *ngFor="let category of filteredCategories"
             class="menu-item"
             [class.card-view]="viewMode === 'card'"
             [class.list-view]="viewMode === 'list'">
             
-            <figure class="item-media">
+            <!-- <figure class="item-media">
                 <img 
-                    [src]="item.imageUrl" 
-                    [alt]="item.name"
+                    [src]="category.imageUrl" 
+                    [alt]="category.name"
                     class="item-image"
                     loading="lazy"
                 />
-            </figure>
+            </figure> -->
             
             <div class="item-content">
                 <header class="item-header">
-                    <h2 class="item-title">{{ item.name }}</h2>
-                    <p class="item-price">{{ item.basePrice | currency }}</p>
+                    <h2 class="item-title">{{ category.name }}</h2>
                 </header>
                 
-                <p class="item-description">{{ item.description }}</p>
+                <p class="item-description">{{ category.description }}</p>
+                <p class="item-time">
+                    <i class="fas fa-clock"></i>
+                    {{ category.availableStartTime }} - {{ category.availableEndTime }}
+                </p>
                 
                 <div class="item-metadata">
-                    <span class="badge">{{ getCategoryName(item.categoryId) }}</span>
+                    <span class="badge {{ category.ageRestricted ? 'ar' : '' }}">{{ category.ageRestricted ? 'Age Restricted' : 'No Age Restriction' }}</span>
                     <div class="spacer"></div>
                     <div class="action-buttons">
                         <button 
-                            *ngIf="readSingleMenuItem"
+                            *ngIf="readSingleCategory"
                             class="icon-button"
-                            (click)="viewDetails(item)"
+                            (click)="viewDetails(category)"
                             aria-label="View details">
                             <i class="fas fa-eye"></i>
                         </button>
                         <button 
-                            *ngIf="isEditable"
+                            *ngIf="editCategory"
                             class="icon-button"
-                            (click)="openEditDialog(item)"
+                            (click)="openEditDialog(category)"
                             aria-label="Edit item">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button 
-                            *ngIf="deleteMenuItem"
+                            *ngIf="deleteSingleCategory"
                             class="icon-button danger"
-                            (click)="deleteItem(item)"
+                            (click)="deleteCategory(category)"
                             aria-label="Delete item">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -99,18 +86,18 @@
     </main>
 
     <!-- Empty State -->
-    <div *ngIf="filteredMenuItems.length === 0" class="empty-state">
+    <div *ngIf="filteredCategories.length === 0" class="empty-state">
         <i class="material-icons fas fa-pizza-slice"></i>
-        <h3>No menu items found</h3>
+        <h3>No Categories found</h3>
         <p>Try adjusting your search or filters</p>
     </div>
 
     <!-- Dialog -->
     <div class="dialog-backdrop" *ngIf="showDialog">
         <div class="dialog-card">
-            <h2 class="dialog-title">{{ editingItem ? 'Edit' : 'Create' }} Menu Item</h2>
+            <h2 class="dialog-title">{{ editingCategory ? 'Edit' : 'Create' }} Category</h2>
             
-            <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" class="dialog-form">
+            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="dialog-form">
                 <div class="form-field">
                     <label>Name</label>
                     <input 
@@ -129,49 +116,40 @@
                         rows="3"
                     ></textarea>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-field">
-                        <label>Price</label>
-                        <input 
-                            type="number" 
-                            formControlName="basePrice"
-                            class="mdc-text-field__input"
-                            step="0.01"
-                            min="0"
-                            required
-                        />
-                    </div>
                     
-                    <div class="form-field">
-                        <label>Category</label>
-                        <select 
-                            formControlName="categoryId"
-                            class="mdc-select"
-                            required>
-                            <option *ngFor="let cat of categories" [value]=cat.id>
-                                {{ cat.name }}
-                            </option>
-                        </select>
-                    </div>
+                <div class="form-field">
+                    <label>Age Restricted</label>
+                    <select 
+                        formControlName="ageRestricted"
+                        class="mdc-select"
+                        required>
+                        <option value="true">
+                            Yes
+                        </option>
+                        <option selected value="false">
+                            No
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-field">
-                    <label class="file-upload">
-                        <input 
-                            type="file" 
-                            (change)="onImageSelect($event)"
-                            accept="image/*"
-                            hidden
-                        />
-                        <span class="upload-button">
-                            <i class="material-icons fas fa-upload"></i>
-                            {{ menuForm.get('image')?.value ? 'Change Image' : 'Upload Image' }}
-                        </span>
-                        <span class="file-name" *ngIf="menuForm.get('image')?.value">
-                            {{ menuForm.get('image')?.value.name }}
-                        </span>
-                    </label>
+                    <label>Available Start Time</label>
+                    <input 
+                        type="time" 
+                        formControlName="availableStartTime"
+                        class="mdc-text-field__input"
+                        required
+                    />
+                </div>
+
+                <div class="form-field">
+                    <label>Available End Time</label>
+                    <input 
+                        type="time" 
+                        formControlName="availableEndTime"
+                        class="mdc-text-field__input"
+                        required
+                    />
                 </div>
 
                 <div class="dialog-actions">
@@ -184,7 +162,7 @@
                     <button 
                         type="submit" 
                         class="mdc-button mdc-button--raised"
-                        [disabled]="menuForm.invalid || loading">
+                        [disabled]="categoryForm.invalid || loading">
                         {{ loading ? 'Saving...' : 'Save Changes' }}
                     </button>
                 </div>

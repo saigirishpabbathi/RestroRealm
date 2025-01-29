@@ -28,13 +28,15 @@ export class MenuComponent implements OnInit {
         type: 'success' | 'error';
     } | null = null;
     isEditable: boolean = false;
+    createMenuItem: boolean = false;
+    readSingleMenuItem: boolean = false;
+    deleteMenuItem: boolean = false;
 
     constructor(
         private menuService: MenuService,
         private authService: AuthService,
         private fb: FormBuilder
     ) {
-        this.isEditable = this.hasPermission('UPDATE_SINGLE_MENU_ITEM');
         this.menuForm = this.fb.group({
             name: ['', Validators.required],
             description: ['', Validators.required],
@@ -45,6 +47,10 @@ export class MenuComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.isEditable = this.hasPermission('UPDATE_SINGLE_MENU_ITEM');
+        this.createMenuItem = this.hasPermission('CREATE_MENU_ITEM');
+        this.readSingleMenuItem = this.hasPermission('READ_SINGLE_MENU_ITEM');
+        this.deleteMenuItem = this.hasPermission('DELETE_MENU_ITEM')
         this.loadMenuItems();
         this.loadCategories();
     }
@@ -153,7 +159,6 @@ export class MenuComponent implements OnInit {
 
     viewDetails(item: any) {
         console.log('Viewing details for:', item);
-        // Implement navigation or modal to show details
         alert(`Details for ${item.name}:\n${item.description}\nPrice: $${item.basePrice}`);
     }
 

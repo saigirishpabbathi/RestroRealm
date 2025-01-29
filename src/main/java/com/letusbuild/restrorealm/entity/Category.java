@@ -20,6 +20,9 @@ public class Category extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column
+    private String description;
+
     @Column(nullable = false)
     private boolean ageRestricted = false;
 
