@@ -1,9 +1,19 @@
 package com.letusbuild.restrorealm.service;
+import com.letusbuild.restrorealm.dto.OrderRequestDto;
+import com.letusbuild.restrorealm.dto.OrderResponseDto;
 
-import com.letusbuild.restrorealm.dto.OrderDto;
+
+import java.util.List;
 
 public interface OrderService {
-    OrderDto getOrderById(Long orderId);
 
-    OrderDto createOrder(OrderDto orderDto);
+    OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
+
+    OrderResponseDto getOrderById(Long orderId);
+
+    List<OrderResponseDto> getAllOrders();
+
+    OrderResponseDto updateOrderStatus(Long orderId, String status);
+
+    void cancelOrder(Long orderId);
 }

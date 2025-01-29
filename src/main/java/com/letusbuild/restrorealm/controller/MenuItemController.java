@@ -29,7 +29,7 @@ public class MenuItemController {
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasAuthority('CREATE_MENU_ITEM')")
+//    @PreAuthorize("hasAuthority('CREATE_MENU_ITEM')")
     public ResponseEntity<MenuItemDto> createMenuItem(@RequestBody MenuItemDto menuItemDto){
         return ResponseEntity.ok(menuItemService.createMenuItem(menuItemDto));
     }

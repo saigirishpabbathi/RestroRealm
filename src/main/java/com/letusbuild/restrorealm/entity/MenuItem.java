@@ -28,7 +28,7 @@ public class MenuItem extends BaseEntity {
 
     @Column(nullable = false)
     @DecimalMin(value = "0.0", inclusive = true)
-    private BigDecimal basePrice;
+    private Double basePrice;
 
     @Column(nullable = false)
     private boolean isRestricted;

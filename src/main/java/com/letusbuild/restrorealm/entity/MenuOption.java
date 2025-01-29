@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -26,5 +27,6 @@ public class MenuOption extends BaseEntity {
     private BigDecimal price;
 
     @ManyToOne
+    @JsonBackReference
     private Customization customization;
 }
