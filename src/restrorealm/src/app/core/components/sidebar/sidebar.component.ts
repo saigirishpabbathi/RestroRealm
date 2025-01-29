@@ -21,7 +21,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     logoPath = '../../../../assets/logo.png';
     readAllMenuItems: boolean = false;
     readAllTables: boolean = false;
-    readAllReservations: boolean = false;;
+    readAllReservations: boolean = false;
+    readAllCategories: boolean = false;
     readAllKitchenOrders: boolean = false;;
     readAllStaff: boolean = false;;
     readAllOrders: boolean = false;;
@@ -46,6 +47,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.readAllTables = this.hasPermission('READ_ALL_TABLES');
         this.readAllReservations = this.hasPermission('READ_ALL_RESERVATIONS');
         this.readAllKitchenOrders = this.hasPermission('READ_ALL_KITCHEN_ORDERS');
+        this.readAllCategories = this.hasPermission('READ_ALL_CATEGORIES');
         this.readAllStaff = this.hasPermission('READ_ALL_STAFF');
         this.readAllOrders = this.hasPermission('READ_ALL_ORDERS');
         this.readAllReports = this.hasPermission('READ_ALL_REPORTS');

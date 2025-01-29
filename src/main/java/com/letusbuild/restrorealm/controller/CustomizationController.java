@@ -36,7 +36,7 @@ public class CustomizationController {
 
     @PutMapping("/{customizationId}")
     @PreAuthorize("hasAuthority('UPDATE_SINGLE_CUSTOMIZATION')")
-    public ResponseEntity<CustomizationDto> updateCustomization(@PathVariable Long customizationId, CustomizationDto customizationDto){
+    public ResponseEntity<CustomizationDto> updateCustomization(@PathVariable Long customizationId, @RequestBody CustomizationDto customizationDto){
         return ResponseEntity.ok(customizationService.updateCustomization(customizationId, customizationDto));
     }
 

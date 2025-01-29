@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,28 +15,23 @@ export class MenuService {
   private readonly menuItems$ = this.menuItemsSubject.asObservable();
   constructor(
       private http: HttpClient,
-      @Inject(PLATFORM_ID) private platformId: Object 
+      @Inject(PLATFORM_ID) private platformId: Object, 
+      private authService: AuthService
     ) {
       this.getCategories();
       this.getAllMenuItems();
+      this.getHeaders();
     }
 
-    getCategories(): Observable<any[]> {
-      this.http.get<any[]>(`${this.apiUrl}/menu/categories`)
-        .subscribe({
-          next: (categories) => {
-            this.categoriesSubject.next(categories);
-          },
-          error: (err) => {
-            console.error('Error fetching categories:', err);
-          }
-        });
-      
-      return this.categories$;
+    private getHeaders() {
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
+      });
     }
   
   getAllMenuItems(): Observable<any[]> {
-      this.http.get<any[]>(`${this.apiUrl}/menu/`)
+      this.http.get<any[]>(`${this.apiUrl}/menu-item/`, { headers: this.getHeaders() })
         .subscribe({
           next: (menuItems) => {
             this.menuItemsSubject.next(menuItems);
@@ -48,20 +44,53 @@ export class MenuService {
       return this.menuItems$;
   }
   
-  getMenuItemsByCategory(categoryId: string) {
-    
+  getMenuItemsByCategory(categoryId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryId}`, { headers: this.getHeaders() });
   }
-  getMenuItemById(itemId: string) {
-    
+
+  getMenuItemById(itemId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() });
   }
+
   createMenuItem(item: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/menu/`, item);
+    return this.http.post<any>(`${this.apiUrl}/menu-item/`, item, { headers: this.getHeaders() });
   }
+
   updateMenuItem(itemId: number, item: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/menu/${itemId}`, item);
+    return this.http.put<any>(`${this.apiUrl}/menu-item/${itemId}`, item, { headers: this.getHeaders() });
   }
+
   deleteMenuItem(itemId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/menu/${itemId}`);
+    return this.http.delete<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() });
+  }
+
+  getCategories(): Observable<any[]> {
+    this.http.get<any[]>(`${this.apiUrl}/category/`, { headers: this.getHeaders() })
+      .subscribe({
+        next: (categories) => {
+          this.categoriesSubject.next(categories);
+        },
+        error: (err) => {
+          console.error('Error fetching categories:', err);
+        }
+      });
+    
+    return this.categories$;
   }
   
+  getCategoryById(categoryId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/category/${categoryId}`, { headers: this.getHeaders() });
+  }
+
+  createCategory(category: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/category/`, category, { headers: this.getHeaders() });
+  }
+
+  updateCategory(categoryId: number, category: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/category/${categoryId}`, category, { headers: this.getHeaders() });
+  }
+
+  deleteCategory(categoryId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/category/${categoryId}`, { headers: this.getHeaders() });
+  }
 }

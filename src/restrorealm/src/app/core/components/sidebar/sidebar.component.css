@@ -69,6 +69,10 @@
     padding: 20px 0;
 }
 
+.nav-submenu{
+    display: none;
+}
+
 .nav-item {
     display: flex;
     align-items: center;

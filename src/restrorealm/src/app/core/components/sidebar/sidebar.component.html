@@ -29,6 +29,14 @@
             <span *ngIf="isExpanded">Menu</span>
         </a>
 
+        <a *ngIf="readAllCategories" 
+           routerLink="/category" 
+           routerLinkActive="active" 
+           class="nav-item">
+            <i class="fas fa-tags"></i>
+            <span *ngIf="isExpanded">Category</span>
+        </a>
+
         <a *ngIf="readAllTables" 
            routerLink="/tables" 
            routerLinkActive="active" 

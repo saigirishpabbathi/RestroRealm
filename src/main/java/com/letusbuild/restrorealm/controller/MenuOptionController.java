@@ -36,7 +36,7 @@ public class MenuOptionController {
 
     @PutMapping("/{menuOptionId}")
     @PreAuthorize("hasAuthority('UPDATE_SINGLE_MENU_OPTION')")
-    public ResponseEntity<MenuOptionDto> updateMenuOption(@PathVariable Long menuOptionId, MenuOptionDto menuOptionDto){
+    public ResponseEntity<MenuOptionDto> updateMenuOption(@PathVariable Long menuOptionId, @RequestBody MenuOptionDto menuOptionDto){
         return ResponseEntity.ok(menuOptionService.updateMenuOption(menuOptionId, menuOptionDto));
     }
 

@@ -1,8 +1,10 @@
 package com.letusbuild.restrorealm.service.Impl;
 
 import com.letusbuild.restrorealm.dto.MenuItemDto;
+import com.letusbuild.restrorealm.entity.Category;
 import com.letusbuild.restrorealm.entity.MenuItem;
 import com.letusbuild.restrorealm.repository.MenuItemRepository;
+import com.letusbuild.restrorealm.service.CategoryService;
 import com.letusbuild.restrorealm.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MenuItemServiceImpl implements MenuItemService {
     private final MenuItemRepository menuItemRepository;
+    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -35,6 +38,9 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public MenuItemDto createMenuItem(MenuItemDto menuItemDto) {
         MenuItem menuItem = modelMapper.map(menuItemDto, MenuItem.class);
+        System.out.println(menuItemDto);
+        Category category = modelMapper.map(categoryService.getCategoryById(menuItemDto.getCategoryId()), Category.class);
+        menuItem.setCategory(category);
         MenuItem savedMenuItem = menuItemRepository.save(menuItem);
         return modelMapper.map(savedMenuItem, MenuItemDto.class);
     }
@@ -47,6 +53,8 @@ public class MenuItemServiceImpl implements MenuItemService {
         existingMenuItem.setBasePrice(menuItemDto.getBasePrice());
         existingMenuItem.setAvailable(menuItemDto.isAvailable());
         existingMenuItem.setRestricted(menuItemDto.isRestricted());
+        Category category = modelMapper.map(categoryService.getCategoryById(menuItemDto.getCategoryId()), Category.class);
+        existingMenuItem.setCategory(category);
         MenuItem updatedMenuItem = menuItemRepository.save(existingMenuItem);
         return modelMapper.map(updatedMenuItem, MenuItemDto.class);
     }

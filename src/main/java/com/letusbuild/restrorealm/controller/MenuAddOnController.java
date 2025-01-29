@@ -36,7 +36,7 @@ public class MenuAddOnController {
 
     @PutMapping("/{menuAddOnId}")
     @PreAuthorize("hasAuthority('UPDATE_SINGLE_MENU_ADD_ON')")
-    public ResponseEntity<MenuAddOnDto> updateMenuAddOn(@PathVariable Long menuAddOnId, MenuAddOnDto menuAddOnDto){
+    public ResponseEntity<MenuAddOnDto> updateMenuAddOn(@PathVariable Long menuAddOnId, @RequestBody MenuAddOnDto menuAddOnDto){
         return ResponseEntity.ok(menuAddOnService.updateMenuAddOn(menuAddOnId, menuAddOnDto));
     }
 }

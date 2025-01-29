@@ -36,7 +36,7 @@ public class MenuItemController {
 
     @PutMapping("/{menuItemId}")
     @PreAuthorize("hasAuthority('UPDATE_SINGLE_MENU_ITEM')")
-    public ResponseEntity<MenuItemDto> updateMenuItem(@PathVariable Long menuItemId, MenuItemDto menuItemDto){
+    public ResponseEntity<MenuItemDto> updateMenuItem(@PathVariable Long menuItemId, @RequestBody MenuItemDto menuItemDto){
         return ResponseEntity.ok(menuItemService.updateMenuItem(menuItemId, menuItemDto));
     }
 

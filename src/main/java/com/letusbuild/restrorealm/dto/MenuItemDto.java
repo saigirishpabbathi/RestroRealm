@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.letusbuild.restrorealm.entity.Category;
 import com.letusbuild.restrorealm.entity.Customization;
 import com.letusbuild.restrorealm.entity.MenuAddOn;
@@ -26,6 +27,7 @@ public class MenuItemDto {
     private BigDecimal basePrice;
     private boolean isRestricted;
     private boolean isAvailable;
+    private Long categoryId;
     private Category category;
     private List<Customization> customizations;
     private List<MenuAddOn> addOns;
