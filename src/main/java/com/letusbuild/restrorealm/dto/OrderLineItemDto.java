@@ -16,5 +16,5 @@ public class OrderLineItemDto {
     private BigDecimal price;
     private Integer quantity;
     @JsonIgnore
-    private OrderDto order;
+    private OrderResponseDto order;
 }

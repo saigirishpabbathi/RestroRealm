@@ -24,7 +24,7 @@ public class MenuItemDto {
     private String name;
     private String description;
     @DecimalMin(value = "0.0", inclusive = true)
-    private BigDecimal basePrice;
+    private Double basePrice;
     private boolean isRestricted;
     private boolean isAvailable;
     private Long categoryId;
