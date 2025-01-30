@@ -33,7 +33,7 @@ export class SettingsComponent implements OnInit {
           { name: 'Roles', description: 'Able to manage roles', navigateTo: '/role', isVisible: this.hasPermission('READ_ALL_ROLES'), icon: 'fas fa-users' },
           { name: 'Permissions', description: 'Able to manage permissions', navigateTo: '/permission', isVisible: this.hasPermission('READ_ALL_PERMISSIONS'), icon: 'fas fa-user-shield' },
           { name: 'Category', description: 'Manage categories for menu', navigateTo: '/category', isVisible: this.hasPermission('READ_ALL_CATEGORIES'), icon: 'fas fa-list' },
-          { name: 'Setting 4', description: 'This is the fourth setting', isVisible: false },
+          { name: 'Menu Add-on', description: 'Manage the Add-ons for menu', navigateTo: '/menu-addon', isVisible: this.hasPermission('READ_ALL_MENU_ADD_ONS'), icon: 'fas fa-utensils' },
           { name: 'Setting 5', description: 'This is the fifth setting', isVisible: false  },
           { name: 'Setting 6', description: 'This is the sixth setting', isVisible: false  },
           { name: 'Setting 7', description: 'This is the seventh setting', isVisible: false  },

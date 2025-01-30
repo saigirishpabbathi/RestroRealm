@@ -32,7 +32,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     constructor(
         private authService: AuthService,
         private sidebarService: SidebarService
-    ) {}
+    ) {
+        this.readAllMenuItems = this.hasPermission('READ_ALL_MENU_ITEMS');
+        this.readAllTables = this.hasPermission('READ_ALL_TABLES');
+        this.readAllReservations = this.hasPermission('READ_ALL_RESERVATIONS');
+        this.readAllKitchenOrders = this.hasPermission('READ_ALL_KITCHEN_ORDERS');
+        this.readAllCategories = this.hasPermission('READ_ALL_CATEGORIES');
+        this.readAllStaff = this.hasPermission('READ_ALL_STAFF');
+        this.readAllOrders = this.hasPermission('READ_ALL_ORDERS');
+        this.readAllReports = this.hasPermission('READ_ALL_REPORTS');
+        this.readAllSettings = this.hasPermission('READ_ALL_SETTINGS');
+    }
 
     ngOnInit(): void {
         this.subscriptions.push(

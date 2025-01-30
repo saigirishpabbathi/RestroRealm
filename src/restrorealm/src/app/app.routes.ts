@@ -10,6 +10,7 @@ import { MenuOptionComponent } from './features/menu-option/menu-option.componen
 import { RoleComponent } from './features/roles/roles.component';
 import { SettingsComponent } from './core/components/settings/settings.component';
 import { PermissionsComponent } from './features/permissions/permissions.component';
+import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'role', component: RoleComponent, canActivate: [AuthGuard] },
     { path: 'permission', component: PermissionsComponent, canActivate: [AuthGuard] },
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+    { path: 'menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
