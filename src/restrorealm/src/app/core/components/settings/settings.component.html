@@ -22,11 +22,14 @@
             *ngFor="let setting of filteredSettings"
             class="menu-item"
             [class.card-view]="viewMode === 'card'"
-            [class.list-view]="viewMode === 'list'">
+            [class.list-view]="viewMode === 'list'"
+            [hidden]="!setting.isVisible"
+            >
             
-            <div class="item-content">
+            <div class="item-content" (click)="onSelect(setting.navigateTo)">
                 <header class="item-header">
                     <h2 class="item-title">{{ setting.name }}</h2>
+                    <i class="item-icon" [ngClass]="setting.icon"></i>
                 </header>
                 <p class="item-description">{{ setting.description }}</p>
             </div>

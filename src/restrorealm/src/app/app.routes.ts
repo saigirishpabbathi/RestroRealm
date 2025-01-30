@@ -8,7 +8,7 @@ import { MenuComponent } from './features/menu/menu.component';
 import { CategoryComponent } from './features/category/category.component';
 import { MenuOptionComponent } from './features/menu-option/menu-option.component';
 import { RoleComponent } from './features/roles/roles.component';
-import { SettingsComponent } from './features/settings/settings.component';
+import { SettingsComponent } from './core/components/settings/settings.component';
 import { PermissionsComponent } from './features/permissions/permissions.component';
 
 export const routes: Routes = [
