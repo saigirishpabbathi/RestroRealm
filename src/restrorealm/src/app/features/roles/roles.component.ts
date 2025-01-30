@@ -49,10 +49,7 @@ export class RoleComponent {
         const time = new Date();
         this.roleForm = this.fb.group({
             name: ['', Validators.required],
-            description: [''],
-            ageRestricted: [false, Validators.required],
-            availableStartTime: [time, Validators.required],
-            availableEndTime: [time, Validators.required],
+            description: ['']
         });
     }
 
@@ -106,10 +103,7 @@ export class RoleComponent {
         this.editingRole = role;
         this.roleForm.patchValue({
             name: role.name,
-            description: role.description,
-            ageRestricted: role.ageRestricted,
-            availableStartTime: role.availableStartTime,
-            availableEndTime: role.availableEndTime,
+            description: role.description
         });
         this.showDialog = true;
     }
@@ -131,12 +125,6 @@ export class RoleComponent {
 
         this.loading = true;
         const roleData = this.roleForm.value;
-
-        if(roleData.availableStartTime >= roleData.availableEndTime) {
-            this.showToast('Start time must be less than end time', 'error');
-            this.loading = false;
-            return;
-        }
 
         const request = this.editingRole
             ? this.roleService.updateRole(this.editingRole.id, roleData)
