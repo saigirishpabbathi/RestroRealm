@@ -16,5 +16,12 @@ public class OrderItemResponseDto {
     private Double price; // Price of one item
 
     private Double totalItemPrice; // Quantity * Price
+
+    public OrderItemResponseDto(String menuItemName, Integer quantity, Double price) {
+        this.menuItemName = menuItemName;
+        this.quantity = quantity;
+        this.price = price;
+        this.totalItemPrice = quantity * price; // Automatically calculate total price
+    }
 }
 

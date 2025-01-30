@@ -34,4 +34,7 @@ public class Order extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PaymentEntity payment; // One-to-One mapping with Payment
 }
