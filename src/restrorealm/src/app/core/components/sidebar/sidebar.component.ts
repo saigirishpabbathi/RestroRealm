@@ -19,7 +19,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     isExpanded = false;
     user: User | null = null;
     private subscriptions: Subscription[] = [];
-    logoPath = environment.imageUrl + 'images/logo.png';
+    logoPath = environment.imageUrl + '/images/logo.png';
     readAllMenuItems: boolean = false;
     readAllTables: boolean = false;
     readAllReservations: boolean = false;
