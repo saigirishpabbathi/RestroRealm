@@ -42,7 +42,7 @@
         <tr *ngFor="let user of users">
           <td>{{ user.userId }}</td>
           <td>
-            <img [src]="user.profileImageUrl ?  user.pprofileImageUrl : placeholderImage" class="table-profile-image" />
+            <img [src]="user.profileImageUrl ?  imageUrl + user.profileImageUrl : placeholderImage" class="table-profile-image" />
           </td>
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>

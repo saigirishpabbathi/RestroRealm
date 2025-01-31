@@ -24,6 +24,12 @@ export class UserService {
       'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
     });
   }
+
+  private getHeadersNoJson() {
+    return new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
+    });
+  }
   
   getAllUsers(): Observable<any> {
     return this.http.get(`${this.baseUrl}`,{ headers: this.getHeaders() });
@@ -52,7 +58,7 @@ export class UserService {
   uploadProfileImage(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('image', file);
-    return this.http.put(`${this.baseUrl}/me/profile-image`, formData,{ headers: this.getHeaders() });
+    return this.http.put(`${this.baseUrl}/me/profile-image`, formData,{ headers: this.getHeadersNoJson() });
   }
 
   deleteUser(id: number): Observable<any> {

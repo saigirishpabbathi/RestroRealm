@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
-import { ProfileComponent } from './features/profile/profile.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { MenuComponent } from './features/menu/menu.component';
@@ -14,11 +13,11 @@ import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { MenuPageComponent } from './pages/menu-page/menu-page.component';
 import { UserListComponent } from './features/user-list/user-list.component';
+import { UserProfileComponent } from './features/user-profile/user-profile.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-    { path: 'profile', component: ProfileComponent },
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -30,6 +29,7 @@ export const routes: Routes = [
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
+    { path: 'profile', component: UserProfileComponent, canActivate:[AuthGuard] },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];
