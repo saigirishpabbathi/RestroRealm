@@ -55,3 +55,8 @@ To set up the project on a new device, follow these steps:
 - If you encounter any issues, refer to the project's documentation or reach out to the maintainers.  
 
 Happy coding! 🚀
+
+
+## For Data
+- `INSERT INTO role (name, description, deleted, created_at, updated_at) VALUES("SuperAdmin", "Super Admin for managing Overall Site", False, now(), now());`
+- `INSERT INTO role (name, description, deleted, created_at, updated_at) VALUES("User", "User is refered to as customer", False, now(), now());`
