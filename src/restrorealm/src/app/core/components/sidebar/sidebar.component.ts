@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { User } from '../../../shared/models/user.model';
 import { SidebarService } from '../../services/sidebar/sidebar.service';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-sidebar',
@@ -18,7 +19,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     isExpanded = false;
     user: User | null = null;
     private subscriptions: Subscription[] = [];
-    logoPath = '../../../../assets/logo.png';
+    logoPath = environment.imageUrl + 'images/logo.png';
     readAllMenuItems: boolean = false;
     readAllTables: boolean = false;
     readAllReservations: boolean = false;
