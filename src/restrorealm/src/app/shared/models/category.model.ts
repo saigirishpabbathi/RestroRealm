@@ -4,5 +4,6 @@ export interface Category {
     ageRestricted: boolean;
     availableStartTime: string;
     availableEndTime: string;
+    imageUrl?: string;
   }
   

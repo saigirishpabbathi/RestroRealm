@@ -11,12 +11,16 @@ import { RoleComponent } from './features/roles/roles.component';
 import { SettingsComponent } from './core/components/settings/settings.component';
 import { PermissionsComponent } from './features/permissions/permissions.component';
 import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
+import { CategoryPageComponent } from './pages/category-page/category-page.component';
+import { MenuPageComponent } from './pages/menu-page/menu-page.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'profile', component: ProfileComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+    { path: 'categories', component: CategoryPageComponent },
+    { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'menu', component: MenuComponent, canActivate: [AuthGuard] },
     { path: 'category', component: CategoryComponent, canActivate: [AuthGuard] },
     { path: 'role', component: RoleComponent, canActivate: [AuthGuard] },

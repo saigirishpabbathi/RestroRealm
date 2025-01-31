@@ -93,4 +93,8 @@ export class MenuService {
   deleteCategory(categoryId: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/category/${categoryId}`, { headers: this.getHeaders() });
   }
+
+  getMenuItemsByCategoryName(categoryName: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryName}`, { headers: this.getHeaders() });
+  }
 }
