@@ -51,6 +51,12 @@ export class UserService {
       'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
     });
   }
+
+  private getHeadersNoJson() {
+    return new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
+    });
+  }
   
 >>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
   getAllUsers(): Observable<any> {
@@ -100,7 +106,7 @@ export class UserService {
   uploadProfileImage(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('image', file);
-    return this.http.put(`${this.baseUrl}/me/profile-image`, formData,{ headers: this.getHeaders() });
+    return this.http.put(`${this.baseUrl}/me/profile-image`, formData,{ headers: this.getHeadersNoJson() });
   }
 
 <<<<<<< HEAD
