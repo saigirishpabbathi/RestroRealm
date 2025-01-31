@@ -29,6 +29,11 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getMenuItemById(menuItemId));
     }
 
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<List<MenuItemDto>> getMenuItemsByCategoryName(@PathVariable String categoryName){
+        return ResponseEntity.ok(menuItemService.getMenuItemsByCategoryName(categoryName));
+    }
+
     @GetMapping("/")
     @PreAuthorize("hasAuthority('READ_ALL_MENU_ITEMS')")
     public ResponseEntity<List<MenuItemDto>> getAllMenuItems(){
