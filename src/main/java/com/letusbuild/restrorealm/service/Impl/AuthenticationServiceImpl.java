@@ -1,9 +1,6 @@
 package com.letusbuild.restrorealm.service.Impl;
 
-import com.letusbuild.restrorealm.dto.AuthResponseDto;
-import com.letusbuild.restrorealm.dto.LoginDto;
-import com.letusbuild.restrorealm.dto.SignUpDto;
-import com.letusbuild.restrorealm.dto.UserDto;
+import com.letusbuild.restrorealm.dto.*;
 import com.letusbuild.restrorealm.entity.Role;
 import com.letusbuild.restrorealm.entity.User;
 import com.letusbuild.restrorealm.repository.RoleRepository;

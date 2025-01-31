@@ -1,9 +1,6 @@
 package com.letusbuild.restrorealm.service;
 
-import com.letusbuild.restrorealm.dto.AuthResponseDto;
-import com.letusbuild.restrorealm.dto.LoginDto;
-import com.letusbuild.restrorealm.dto.SignUpDto;
-import com.letusbuild.restrorealm.dto.UserDto;
+import com.letusbuild.restrorealm.dto.*;
 
 public interface AuthenticationService {
     AuthResponseDto login(LoginDto login);

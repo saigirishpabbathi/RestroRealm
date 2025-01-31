@@ -13,11 +13,15 @@ import { PermissionsComponent } from './features/permissions/permissions.compone
 import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { MenuPageComponent } from './pages/menu-page/menu-page.component';
+import { UserProfileComponent } from './features/user-profile/user-profile.component';
+import { UserListComponent } from './features/user-list/user-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'profile', component: ProfileComponent },
+    { path: 'users', component: UserListComponent }, // Admin Panel
+    { path: 'profiles', component: UserProfileComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },

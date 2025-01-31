@@ -1,0 +1,25 @@
+<div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h2>My Profile</h2>
+      </div>
+  
+      <div class="profile-image-section">
+        <img *ngIf="user.profileImageUrl" [src]="user.profileImageUrl" class="profile-image" />
+        <input type="file" id="fileInput" (change)="onFileSelected($event)" hidden />
+        <label for="fileInput" class="upload-btn">Change Profile Picture</label>
+        <button (click)="uploadProfileImage()" class="save-btn">Upload</button>
+      </div>
+  
+      <div class="profile-info">
+        <label class="form-label">Name</label>
+        <input [(ngModel)]="user.name" type="text" class="form-input" />
+  
+        <label class="form-label">Email</label>
+        <input [(ngModel)]="user.email" type="email" class="form-input" />
+  
+        <button (click)="saveChanges()" class="save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+  

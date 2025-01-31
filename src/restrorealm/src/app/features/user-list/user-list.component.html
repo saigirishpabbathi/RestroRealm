@@ -1,0 +1,57 @@
+<div class="admin-container">
+    <h2 class="admin-header">User Management</h2>
+  
+    <div class="table-container">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Profile</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.userId }}</td>
+            <td>
+              <img *ngIf="user.profileImageUrl" [src]="user.profileImageUrl" class="table-profile-image" />
+            </td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.roleName }}</td>
+            <td>
+              <button (click)="openEditModal(user)" class="edit-btn">✏️ Edit</button>
+              <button (click)="deleteUser(user.userId)" class="delete-btn">🗑 Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- ✅ Edit User Modal -->
+    <div class="modal" *ngIf="isEditModalOpen">
+      <div class="modal-content">
+        <h3>Edit User</h3>
+        <label>Name</label>
+        <input [(ngModel)]="selectedUser.name" type="text" class="form-input" />
+  
+        <label>Email</label>
+        <input [(ngModel)]="selectedUser.email" type="email" class="form-input" />
+  
+        <label>Role</label>
+        <select [(ngModel)]="selectedUser.roleName" class="form-input">
+          <option value="Admin">Admin</option>
+          <option value="Manager">Manager</option>
+          <option value="Waiter">Waiter</option>
+          <option value="Customer">Customer</option>
+        </select>
+  
+        <button (click)="saveChanges()" class="save-btn">Save Changes</button>
+        <button (click)="isEditModalOpen = false" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
