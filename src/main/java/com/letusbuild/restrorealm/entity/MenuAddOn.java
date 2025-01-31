@@ -30,4 +30,11 @@ public class MenuAddOn extends BaseEntity {
 
     @ManyToOne
     private MenuItem menuItem;
+
+    @Column
+    private String imagePath;
+
+    @Column(nullable = false)
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
 }

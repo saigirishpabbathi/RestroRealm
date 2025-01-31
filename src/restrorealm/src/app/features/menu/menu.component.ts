@@ -4,6 +4,7 @@ import { MenuService } from '../../core/services/menu/menu.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { ToasterComponent } from '../../shared/components/toaster/toaster.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
     standalone: true,
@@ -31,6 +32,7 @@ export class MenuComponent implements OnInit {
     createMenuItem: boolean = false;
     readSingleMenuItem: boolean = false;
     deleteMenuItem: boolean = false;
+    apiUrl = environment.apiUrl;
 
     constructor(
         private menuService: MenuService,
@@ -39,10 +41,11 @@ export class MenuComponent implements OnInit {
     ) {
         this.menuForm = this.fb.group({
             name: ['', Validators.required],
-            description: ['', Validators.required],
-            basePrice: ['', [Validators.required, Validators.min(0)]],
+            description: [''],
+            basePrice: [0, [Validators.required, Validators.min(0)]],
             categoryId: [0, Validators.required],
-            image: [null]
+            image: [null],
+            calories: [0, [Validators.required, Validators.min(0)]],
         });
     }
 
@@ -110,7 +113,8 @@ export class MenuComponent implements OnInit {
             name: item.name,
             description: item.description,
             basePrice: item.basePrice,
-            categoryId: item.categoryId
+            categoryId: item.categoryId,
+            calories: item.calories
         });
         this.showDialog = true;
     }
@@ -123,14 +127,25 @@ export class MenuComponent implements OnInit {
 
     onSubmit() {
         if (this.menuForm.invalid) return;
-
         this.loading = true;
-        const menuData = this.menuForm.value;
-
+        const formData = new FormData();
+        const menuItemJson = JSON.stringify({
+            name: this.menuForm.get('name')?.value,
+            description: this.menuForm.get('description')?.value,
+            basePrice: this.menuForm.get('basePrice')?.value,
+            categoryId: this.menuForm.get('categoryId')?.value,
+            calories: this.menuForm.get('calories')?.value
+        });
+        formData.append("menuItem", menuItemJson);
+        if (this.menuForm.get('image')?.value) {
+            formData.append("image", this.menuForm.get('image')?.value);
+        }
+        for (const pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
         const request = this.editingItem
-            ? this.menuService.updateMenuItem(this.editingItem.id, menuData)
-            : this.menuService.createMenuItem(menuData);
-
+            ? this.menuService.updateMenuItem(this.editingItem.id, formData)
+            : this.menuService.createMenuItem(formData);
         request.subscribe({
             next: () => {
                 this.showToast(
@@ -140,8 +155,11 @@ export class MenuComponent implements OnInit {
                 this.loadMenuItems();
                 this.closeDialog();
             },
-            error: (error) => this.showToast(error.message, 'error'),
-            complete: () => this.loading = false
+            error: (error) => {
+                console.error("API Error:", error);
+                this.showToast(error.message, 'error');
+            },
+            complete: () => (this.loading = false)
         });
     }
 
@@ -178,9 +196,9 @@ export class MenuComponent implements OnInit {
 
     onImageSelect(event: Event) {
         const input = event.target as HTMLInputElement;
-        if (input.files && input.files[0]) {
+        if (input.files && input.files.length > 0) {
             const file = input.files[0];
             this.menuForm.patchValue({ image: file });
         }
-    }
+    }    
 }

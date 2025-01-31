@@ -1,6 +1,5 @@
 package com.letusbuild.restrorealm.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.letusbuild.restrorealm.entity.Category;
 import com.letusbuild.restrorealm.entity.Customization;
 import com.letusbuild.restrorealm.entity.MenuAddOn;
@@ -11,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,6 +25,9 @@ public class MenuItemDto {
     private Double basePrice;
     private boolean isRestricted;
     private boolean isAvailable;
+    private String imagePath;
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
     private Long categoryId;
     private Category category;
     private List<Customization> customizations;

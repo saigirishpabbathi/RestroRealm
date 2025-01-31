@@ -52,7 +52,7 @@
             
             <figure class="item-media">
                 <img 
-                    [src]="item.imageUrl" 
+                    [src]="apiUrl+item.imagePath" 
                     [alt]="item.name"
                     class="item-image"
                     loading="lazy"
@@ -136,6 +136,18 @@
                         <input 
                             type="number" 
                             formControlName="basePrice"
+                            class="mdc-text-field__input"
+                            step="0.01"
+                            min="0"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-field">
+                        <label>Calories</label>
+                        <input 
+                            type="number" 
+                            formControlName="calories"
                             class="mdc-text-field__input"
                             step="0.01"
                             min="0"

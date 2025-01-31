@@ -35,6 +35,7 @@ public class MenuOptionServiceImpl implements MenuOptionService {
     @Override
     public MenuOptionDto createMenuOption(MenuOptionDto menuOptionDto) {
         MenuOption menuOption = modelMapper.map(menuOptionDto, MenuOption.class);
+        menuOption.setImagePath(menuOptionDto.getImagePath());
         MenuOption savedOption = menuOptionRepository.save(menuOption);
         return modelMapper.map(savedOption, MenuOptionDto.class);
     }
@@ -44,6 +45,10 @@ public class MenuOptionServiceImpl implements MenuOptionService {
         MenuOption existingMenuOption = modelMapper.map(getMenuOptionById(menuOptionId), MenuOption.class);
         existingMenuOption.setName(menuOptionDto.getName());
         existingMenuOption.setPrice(menuOptionDto.getPrice());
+        existingMenuOption.setCalories(menuOptionDto.getCalories());
+        if (menuOptionDto.getImagePath() != null) {
+            existingMenuOption.setImagePath(menuOptionDto.getImagePath());
+        }
         MenuOption updatedMenuOption = menuOptionRepository.save(existingMenuOption);
         return modelMapper.map(updatedMenuOption, MenuOptionDto.class);
     }

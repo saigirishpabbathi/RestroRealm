@@ -30,11 +30,18 @@ public class MenuItem extends BaseEntity {
     @DecimalMin(value = "0.0", inclusive = true)
     private Double basePrice;
 
+    @Column
+    private String imagePath;
+
     @Column(nullable = false)
     private boolean isRestricted;
 
     @Column(nullable = false)
     private boolean isAvailable;
+
+    @Column(nullable = false)
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
 
     @ManyToOne
     private Category category;

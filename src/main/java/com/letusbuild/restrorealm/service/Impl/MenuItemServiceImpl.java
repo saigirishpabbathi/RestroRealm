@@ -41,6 +41,7 @@ public class MenuItemServiceImpl implements MenuItemService {
         System.out.println(menuItemDto);
         Category category = modelMapper.map(categoryService.getCategoryById(menuItemDto.getCategoryId()), Category.class);
         menuItem.setCategory(category);
+        menuItem.setImagePath(menuItemDto.getImagePath());
         MenuItem savedMenuItem = menuItemRepository.save(menuItem);
         return modelMapper.map(savedMenuItem, MenuItemDto.class);
     }
@@ -53,8 +54,12 @@ public class MenuItemServiceImpl implements MenuItemService {
         existingMenuItem.setBasePrice(menuItemDto.getBasePrice());
         existingMenuItem.setAvailable(menuItemDto.isAvailable());
         existingMenuItem.setRestricted(menuItemDto.isRestricted());
+        existingMenuItem.setCalories(menuItemDto.getCalories());
         Category category = modelMapper.map(categoryService.getCategoryById(menuItemDto.getCategoryId()), Category.class);
         existingMenuItem.setCategory(category);
+        if (menuItemDto.getImagePath() != null) {
+            existingMenuItem.setImagePath(menuItemDto.getImagePath());
+        }
         MenuItem updatedMenuItem = menuItemRepository.save(existingMenuItem);
         return modelMapper.map(updatedMenuItem, MenuItemDto.class);
     }

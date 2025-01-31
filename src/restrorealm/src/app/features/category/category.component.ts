@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ToasterComponent } from "../../shared/components/toaster/toaster.component";
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -31,6 +32,7 @@ export class CategoryComponent implements OnInit {
     categoryForm: FormGroup;
     showDialog = false;
     loading = false;
+    apiUrl = environment.apiUrl;
 
     ngOnInit(): void {
         this.editCategory = this.hasPermission('UPDATE_SINGLE_CATEGORY');
@@ -49,6 +51,7 @@ export class CategoryComponent implements OnInit {
         const time = new Date();
         this.categoryForm = this.fb.group({
             name: ['', Validators.required],
+            image: [null],
             description: [''],
             ageRestricted: [false, Validators.required],
             availableStartTime: [time, Validators.required],
@@ -128,31 +131,40 @@ export class CategoryComponent implements OnInit {
 
     onSubmit() {
         if (this.categoryForm.invalid) return;
-
         this.loading = true;
-        const categoryData = this.categoryForm.value;
-
-        if(categoryData.availableStartTime >= categoryData.availableEndTime) {
-            this.showToast('Start time must be less than end time', 'error');
-            this.loading = false;
-            return;
+        const formData = new FormData();
+        const categoryJson = JSON.stringify({
+            name: this.categoryForm.get('name')?.value,
+            description: this.categoryForm.get('description')?.value,
+            ageRestricted: this.categoryForm.get('ageRestricted')?.value,
+            availableStartTime: this.categoryForm.get('availableStartTime')?.value,
+            availableEndTime: this.categoryForm.get('availableEndTime')?.value,
+        });
+        formData.append("category", categoryJson);
+        if (this.categoryForm.get('image')?.value) {
+            formData.append("image", this.categoryForm.get('image')?.value);
         }
-
+        for (const pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
         const request = this.editingCategory
-            ? this.menuService.updateCategory(this.editingCategory.id, categoryData)
-            : this.menuService.createCategory(categoryData);
-
+            ? this.menuService.updateCategory(this.editingCategory.id, formData)
+            : this.menuService.createCategory(formData);
         request.subscribe({
             next: () => {
                 this.showToast(
-                    `Category ${this.editingCategory ? 'updated' : 'created'} successfully`,
+                    `Item ${this.editingCategory ? 'updated' : 'created'} successfully`,
                     'success'
                 );
                 this.loadCategories();
                 this.closeDialog();
             },
-            error: (error) => this.showToast(error.message, 'error'),
-            complete: () => this.loading = false
+            error: (error) => {
+                console.error("API Error:", error);
+                this.showToast(error.message, 'error');
+                this.loading = false;
+            },
+            complete: () => (this.loading = false)
         });
     }
 
@@ -161,4 +173,12 @@ export class CategoryComponent implements OnInit {
         this.editingCategory = null;
         this.categoryForm.reset();
     }
+
+    onImageSelect(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            this.categoryForm.patchValue({ image: file });
+        }
+    }   
 }

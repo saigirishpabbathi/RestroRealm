@@ -23,5 +23,8 @@ public class MenuAddOnDto {
     private boolean deleted;
 //    @NotBlank(message = "Suggestion is required")
     private boolean isSuggested;
+    private String imagePath;
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
     private MenuItem menuItem;
 }

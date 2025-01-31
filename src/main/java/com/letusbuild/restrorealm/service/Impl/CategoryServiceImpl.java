@@ -35,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category category = modelMapper.map(categoryDto, Category.class);
+        category.setImagePath(categoryDto.getImagePath());
         Category savedCategory = categoryRepository.save(category);
         return modelMapper.map(savedCategory, CategoryDto.class);
     }
@@ -43,9 +44,13 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(Long categoryId, CategoryDto categoryDto) {
         Category existingCategory = modelMapper.map(getCategoryById(categoryId), Category.class);
         existingCategory.setName(categoryDto.getName());
+        existingCategory.setDescription(categoryDto.getDescription());
         existingCategory.setAgeRestricted(categoryDto.isAgeRestricted());
         existingCategory.setAvailableStartTime(categoryDto.getAvailableStartTime());
         existingCategory.setAvailableEndTime(categoryDto.getAvailableEndTime());
+        if (categoryDto.getImagePath() != null) {
+            existingCategory.setImagePath(categoryDto.getImagePath());
+        }
         Category updatedCategory = categoryRepository.save(existingCategory);
         return modelMapper.map(updatedCategory, CategoryDto.class);
     }

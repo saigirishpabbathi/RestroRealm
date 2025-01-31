@@ -21,8 +21,15 @@ public class MenuOptionDto {
     @Size(min = 3, max = 50, message = "Customization Type must be between 3 and 50 characters")
     private String name;
 
+    private String description;
+
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal price;
+
+    private String imagePath;
+
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
 
     private Customization customization;
 

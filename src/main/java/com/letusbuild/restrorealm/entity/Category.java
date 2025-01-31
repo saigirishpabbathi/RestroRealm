@@ -31,4 +31,7 @@ public class Category extends BaseEntity {
 
     @Column(nullable = false)
     private LocalTime availableEndTime;
+
+    @Column
+    private String imagePath;
 }

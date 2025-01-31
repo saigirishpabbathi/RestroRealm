@@ -22,6 +22,16 @@ public class MenuOption extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column
+    private String description;
+
+    @Column
+    private String imagePath;
+
+    @Column
+    @DecimalMin(value = "0.0", inclusive = true)
+    private Double calories;
+
     @Column(nullable = false)
     @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal price;

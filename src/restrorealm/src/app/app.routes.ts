@@ -22,12 +22,12 @@ export const routes: Routes = [
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'menu', component: MenuComponent, canActivate: [AuthGuard] },
-    { path: 'category', component: CategoryComponent, canActivate: [AuthGuard] },
-    { path: 'role', component: RoleComponent, canActivate: [AuthGuard] },
-    { path: 'permission', component: PermissionsComponent, canActivate: [AuthGuard] },
+    { path: 'settings/category', component: CategoryComponent, canActivate: [AuthGuard] },
+    { path: 'settings/role', component: RoleComponent, canActivate: [AuthGuard] },
+    { path: 'settings/permission', component: PermissionsComponent, canActivate: [AuthGuard] },
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
-    { path: 'menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
-    { path: 'menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
+    { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
+    { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];

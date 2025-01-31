@@ -35,6 +35,7 @@ public class MenuAddOnServiceImpl implements MenuAddOnService {
     @Override
     public MenuAddOnDto createMenuAddOn(MenuAddOnDto menuAddOnDto) {
         MenuAddOn menuAddOn = modelMapper.map(menuAddOnDto, MenuAddOn.class);
+        menuAddOn.setImagePath(menuAddOnDto.getImagePath());
         MenuAddOn savedMenuAddOn = menuAddOnRepository.save(menuAddOn);
         return modelMapper.map(savedMenuAddOn, MenuAddOnDto.class);
     }
@@ -45,6 +46,10 @@ public class MenuAddOnServiceImpl implements MenuAddOnService {
         existingMenuAddOn.setAddOnName(menuAddOnDto.getAddOnName());
         existingMenuAddOn.setAddOnPrice(menuAddOnDto.getAddOnPrice());
         existingMenuAddOn.setSuggested(menuAddOnDto.isSuggested());
+        existingMenuAddOn.setCalories(menuAddOnDto.getCalories());
+        if (menuAddOnDto.getImagePath() != null) {
+            existingMenuAddOn.setImagePath(menuAddOnDto.getImagePath());
+        }
         MenuAddOn updatedMenuAddOn = menuAddOnRepository.save(existingMenuAddOn);
         return modelMapper.map(updatedMenuAddOn, MenuAddOnDto.class);
     }

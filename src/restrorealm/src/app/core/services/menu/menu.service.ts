@@ -29,6 +29,11 @@ export class MenuService {
         'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
       });
     }
+    private getHeadersNoJson() {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
+      });
+    }
   
   getAllMenuItems(): Observable<any[]> {
       this.http.get<any[]>(`${this.apiUrl}/menu-item/`, { headers: this.getHeaders() })
@@ -52,16 +57,24 @@ export class MenuService {
     return this.http.get<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() });
   }
 
-  createMenuItem(item: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/menu-item/`, item, { headers: this.getHeaders() });
+  // createMenuItem(item: any): Observable<any> {
+  //   return this.http.post<any>(`${this.apiUrl}/menu-item/`, item, { headers: this.getHeaders() });
+  // }
+
+  // updateMenuItem(itemId: number, item: any): Observable<any> {
+  //   return this.http.put<any>(`${this.apiUrl}/menu-item/${itemId}`, item, { headers: this.getHeaders() });
+  // }
+
+  createMenuItem(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/menu-item/`, formData, { headers: this.getHeadersNoJson() });
   }
 
-  updateMenuItem(itemId: number, item: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/menu-item/${itemId}`, item, { headers: this.getHeaders() });
+  updateMenuItem(menuItemId: number, formData: FormData): Observable<any> {
+      return this.http.put(`${this.apiUrl}/menu-item/${menuItemId}`, formData, { headers: this.getHeadersNoJson() });
   }
 
   deleteMenuItem(itemId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() });
+    return this.http.delete<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeadersNoJson() });
   }
 
   getCategories(): Observable<any[]> {
@@ -83,11 +96,11 @@ export class MenuService {
   }
 
   createCategory(category: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/category/`, category, { headers: this.getHeaders() });
+    return this.http.post<any>(`${this.apiUrl}/category/`, category, { headers: this.getHeadersNoJson() });
   }
 
   updateCategory(categoryId: number, category: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/category/${categoryId}`, category, { headers: this.getHeaders() });
+    return this.http.put<any>(`${this.apiUrl}/category/${categoryId}`, category, { headers: this.getHeadersNoJson() });
   }
 
   deleteCategory(categoryId: number): Observable<any> {

@@ -34,14 +34,14 @@
             [class.card-view]="viewMode === 'card'"
             [class.list-view]="viewMode === 'list'">
             
-            <!-- <figure class="item-media">
+            <figure class="item-media">
                 <img 
-                    [src]="category.imageUrl" 
+                    [src]="apiUrl + category.imagePath" 
                     [alt]="category.name"
                     class="item-image"
                     loading="lazy"
                 />
-            </figure> -->
+            </figure>
             
             <div class="item-content">
                 <header class="item-header">
@@ -150,6 +150,24 @@
                         class="mdc-text-field__input"
                         required
                     />
+                </div>
+
+                <div class="form-field">
+                    <label class="file-upload">
+                        <input 
+                            type="file" 
+                            (change)="onImageSelect($event)"
+                            accept="image/*"
+                            hidden
+                        />
+                        <span class="upload-button">
+                            <i class="material-icons fas fa-upload"></i>
+                            {{ categoryForm.get('image')?.value ? 'Change Image' : 'Upload Image' }}
+                        </span>
+                        <span class="file-name" *ngIf="categoryForm.get('image')?.value">
+                            {{ categoryForm.get('image')?.value.name }}
+                        </span>
+                    </label>
                 </div>
 
                 <div class="dialog-actions">
