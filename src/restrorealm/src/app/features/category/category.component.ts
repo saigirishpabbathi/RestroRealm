@@ -32,7 +32,7 @@ export class CategoryComponent implements OnInit {
     categoryForm: FormGroup;
     showDialog = false;
     loading = false;
-    apiUrl = environment.apiUrl;
+    apiUrl = environment.imageUrl;
 
     ngOnInit(): void {
         this.editCategory = this.hasPermission('UPDATE_SINGLE_CATEGORY');

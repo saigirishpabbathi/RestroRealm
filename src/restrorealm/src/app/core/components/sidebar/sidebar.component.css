@@ -52,9 +52,12 @@
 }
 
 .logo {
-    height: 35px;
-    width: auto;
+    width: 200px;   /* Adjust the size of the logo */
+    height: auto;   /* Maintain aspect ratio */
+    display: block; /* Ensure it behaves like a block element */
+    margin: 0 auto; /* Center it horizontally */
 }
+
 
 .toggle-btn {
     background: none;

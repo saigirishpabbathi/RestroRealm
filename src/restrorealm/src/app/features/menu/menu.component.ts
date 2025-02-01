@@ -32,7 +32,7 @@ export class MenuComponent implements OnInit {
     createMenuItem: boolean = false;
     readSingleMenuItem: boolean = false;
     deleteMenuItem: boolean = false;
-    apiUrl = environment.apiUrl;
+    apiUrl = environment.imageUrl;
 
     constructor(
         private menuService: MenuService,
