@@ -38,7 +38,11 @@ export class LoginComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+<<<<<<< HEAD
     if (this.authService.getRefreshToken()) {
+=======
+    if (this.authService.isLoggedIn$) {
+>>>>>>> 851f10d (Removed Homepage and Navbar adjustment)
       this.toast = { message: 'Already LoggedIn! Redirecting to Dashboard!', type: 'success' };
       setTimeout(() => {
         this.toast = null;
