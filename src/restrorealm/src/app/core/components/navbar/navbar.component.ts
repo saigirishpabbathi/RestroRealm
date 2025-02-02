@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { SidebarService } from '../../services/sidebar/sidebar.service';
 @Injectable({
   providedIn: 'root',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   isSidebarOpen = true;
   showProfileDropdown = false;
@@ -90,6 +90,8 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.isSidebarOpen = false;
+    this.showProfileDropdown = false;
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
