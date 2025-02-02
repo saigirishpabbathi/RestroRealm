@@ -40,6 +40,11 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getAllMenuItems());
     }
 
+    @GetMapping("/all/")
+    public ResponseEntity<List<MenuItemDto>> getAllMenuItemsPublic(){
+        return ResponseEntity.ok(menuItemService.getAllMenuItems());
+    }
+
     @PostMapping(value = "/", consumes = { "multipart/form-data" })
     @PreAuthorize("hasAuthority('CREATE_MENU_ITEM')")
     public ResponseEntity<MenuItemDto> createMenuItem(

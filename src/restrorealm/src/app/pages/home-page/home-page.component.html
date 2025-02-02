@@ -1,0 +1,88 @@
+<!-- home-page.component.html -->
+<div class="homepage-container">
+  <!-- Enhanced Slideshow Section -->
+  <section class="slideshow-section" aria-label="Featured dishes">
+    <div class="slideshow-container" (mouseenter)="stopSlideshow()" (mouseleave)="startSlideshow()">
+      <div class="slides">
+        <div *ngFor="let image of slideshowImages; let i = index" 
+             class="slide" 
+             [attr.aria-hidden]="i !== currentSlideIndex"
+             [class.active]="i === currentSlideIndex">
+          <img [src]="image" 
+               [alt]="'Featured dish ' + (i + 1)" 
+               loading="lazy"
+               class="slide-image"
+               (load)="onImageLoad()">
+        </div>
+      </div>
+      <button class="nav-button prev" (click)="prevSlide()" aria-label="Previous slide">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+      </button>
+      <button class="nav-button next" (click)="nextSlide()" aria-label="Next slide">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+      </button>
+      <div class="pagination-dots">
+        <button *ngFor="let image of slideshowImages; let i = index" 
+                class="dot" 
+                [class.active]="i === currentSlideIndex" 
+                (click)="goToSlide(i)"
+                [attr.aria-label]="'Go to slide ' + (i + 1)">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day Specials Section -->
+  <section class="section" aria-labelledby="day-specials-heading">
+    <h2 id="day-specials-heading" class="section-heading">Today's Specials</h2>
+    <div class="card-grid">
+      <article *ngFor="let item of daySpecials" class="special-card">
+        <div class="card-image-container">
+          <img [src]="item.image" 
+               [alt]="item.name" 
+               loading="lazy"
+               class="card-image"
+               (error)="handleImageError($event)">
+        </div>
+        <h3 class="card-title">{{ item.name }}</h3>
+        <button class="card-cta" [attr.aria-label]="'View details for ' + item.name">View Details</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <section class="section" aria-labelledby="menu-heading">
+    <h2 id="menu-heading" class="section-heading">Our Menu</h2>
+    <div class="card-grid">
+      <article *ngFor="let menuItem of filteredMenu" class="menu-card">
+        <div class="card-image-container">
+          <img [src]="menuItem.image" 
+               [alt]="menuItem.name" 
+               loading="lazy"
+               class="card-image"
+               (error)="handleImageError($event)">
+        </div>
+        <h3 class="card-title">{{ menuItem.name }}</h3>
+        <button class="card-cta" [attr.aria-label]="'Order ' + menuItem.name">Order Now</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="section" aria-labelledby="categories-heading">
+    <h2 id="categories-heading" class="section-heading">Categories</h2>
+    <div class="card-grid">
+      <article *ngFor="let category of filteredCategories" class="category-card">
+        <div class="card-image-container">
+          <img [src]="category.image" 
+               [alt]="category.name" 
+               loading="lazy"
+               class="card-image"
+               (error)="handleImageError($event)">
+        </div>
+        <h3 class="card-title">{{ category.name }}</h3>
+        <button class="card-cta" [attr.aria-label]="'Browse ' + category.name">Browse</button>
+      </article>
+    </div>
+  </section>
+</div>

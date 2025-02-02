@@ -34,17 +34,32 @@ export class MenuPageComponent implements OnInit {
   }
 
   fetchMenuItems(): void {
-    this.menuService.getMenuItemsByCategoryName(this.categoryName).subscribe({
-      next: (menuItems) => {
-        this.menuItems = menuItems.map(item => ({
-          ...item,
-          calories: item.calories || 0 // Placeholder for now
-        }));
-      },
-      error: (err) => {
-        console.error('Error fetching menu items:', err);
+    if(!this.categoryName) {
+      this.categoryName = "All";
+      this.menuService.getAllMenuItems().subscribe({
+        next: (menuItems) => {
+          this.menuItems = menuItems.map(item => ({
+            ...item,
+            calories: item.calories || 0,
+          }));
+        },
+        error: (err) => {
+          console.error('Error fetching menu items:', err);
+        }
+      });
+    } else {
+        this.menuService.getMenuItemsByCategoryName(this.categoryName).subscribe({
+          next: (menuItems) => {
+            this.menuItems = menuItems.map(item => ({
+              ...item,
+              calories: item.calories || 0 // Placeholder for now
+            }));
+          },
+          error: (err) => {
+            console.error('Error fetching menu items:', err);
+          }
+        });
       }
-    });
   }
 
   addToCart(menuItem: MenuItem): void {

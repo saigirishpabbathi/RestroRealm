@@ -46,23 +46,24 @@ export class NavbarComponent implements OnInit {
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+    this.showProfileDropdown = false;
   }
 
   viewProfile() {
     this.router.navigate(['/profile']).then(() => {
-      console.log('Navigated to profile page');
+      this.showProfileDropdown = false;
     });
   }
 
   navigateToLogin() {
     this.router.navigate(['/login']).then(() => {
-      console.log('Navigated to login page');
+      this.showProfileDropdown = false;
     });
   }
 
   navigateToRegister() {
     this.router.navigate(['/register']).then(() => {
-      console.log('Navigated to register page');
+      this.showProfileDropdown = false;
     });
   }
 

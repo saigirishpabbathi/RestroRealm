@@ -30,9 +30,11 @@ public class WebSecurityConfig {
     private static final String[] publicRoutes = {
             "/api/v1/auth/**",
             "/api/v1/configs/**",
+            "/api/v1/category/all/",
+            "/api/v1/menu-item/all/",
+            "/api/v1/menu-item/category/**",
             "/images/**",
             "/images/menu/**"
-
     };
 
     @Bean
@@ -46,10 +48,10 @@ public class WebSecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(List.of("http://localhost:4200")); // Frontend origin
-                            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // HTTP methods
-                            config.setAllowedHeaders(List.of("*")); // Allow all headers
-                            config.setAllowCredentials(true); // Allow cookies or Authorization headers
+                            config.setAllowedOrigins(List.of("http://localhost:4200"));
+                            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                            config.setAllowedHeaders(List.of("*"));
+                            config.setAllowCredentials(true);
                             return config;
                         })
                 );

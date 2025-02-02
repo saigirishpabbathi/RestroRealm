@@ -35,6 +35,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
+    @GetMapping("/all/")
+    public ResponseEntity<List<CategoryDto>> getAllCategoriesPublic(){
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
     @PostMapping("/")
     @PreAuthorize("hasAuthority('CREATE_CATEGORY')")
     public ResponseEntity<CategoryDto> createCategory(
