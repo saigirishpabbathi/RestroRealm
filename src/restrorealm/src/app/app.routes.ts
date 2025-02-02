@@ -28,6 +28,6 @@ export const routes: Routes = [
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];

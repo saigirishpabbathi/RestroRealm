@@ -101,6 +101,7 @@
 }
 
 .view-profile, .logout {
+    width: 100%;
     background: none;
     border: none;
     padding: 10px;
