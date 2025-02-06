@@ -34,6 +34,9 @@ export class UserListComponent implements OnInit {
   searchTerm: any;
   filteredUsers: any;
   selectedRole: any;
+  createSingleUser: any;
+  editSingleUser: any;
+  deleteSingleUser: any;
 
   constructor(
           private userService: UserService,
@@ -53,6 +56,9 @@ export class UserListComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadRoles();
+    this.createSingleUser = this.hasPermission("CREATE_SINGLE_USER");
+    this.editSingleUser = this.hasPermission("UPDATE_OTHER_SINGLE_USER");
+    this.deleteSingleUser = this.hasPermission("DELETE_OTHER_SINGLE_USER");
   }
 
   loadUsers(): void {
@@ -154,5 +160,9 @@ export class UserListComponent implements OnInit {
           );
       }
       this.filteredUsers = filtered;
+  }
+
+  hasPermission(permission: string): boolean {
+      return this.authService.hasPermission(permission);
   }
 }
