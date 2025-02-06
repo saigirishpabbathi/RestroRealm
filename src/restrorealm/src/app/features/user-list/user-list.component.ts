@@ -34,9 +34,12 @@ export class UserListComponent implements OnInit {
   searchTerm: any;
   filteredUsers: any;
   selectedRole: any;
+<<<<<<< HEAD
   createSingleUser: any;
   editSingleUser: any;
   deleteSingleUser: any;
+=======
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 
   constructor(
           private userService: UserService,
