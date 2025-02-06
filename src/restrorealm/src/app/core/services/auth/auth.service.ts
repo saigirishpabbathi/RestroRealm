@@ -53,12 +53,20 @@ export class AuthService {
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('accessToken');
+    }
+    return null;
   }
+  
 
   getRefreshToken(): string | null {
+    if (typeof window !== 'undefined') {
       return localStorage.getItem('refreshToken');
+    }
+    return null;
   }
+  
 
   refreshAccessToken(refreshToken: string) {
       return this.http.post<{ accessToken: string }>(`${this.apiUrl}/auth/refresh`, {

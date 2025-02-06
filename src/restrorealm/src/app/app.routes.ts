@@ -13,6 +13,7 @@ import { PermissionsComponent } from './features/permissions/permissions.compone
 import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { MenuPageComponent } from './pages/menu-page/menu-page.component';
+import { UserListComponent } from './features/user-list/user-list.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+    { path: 'settings/users', component: UserListComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu', component: MenuComponent, canActivate: [AuthGuard] },
     { path: 'settings/category', component: CategoryComponent, canActivate: [AuthGuard] },
     { path: 'settings/role', component: RoleComponent, canActivate: [AuthGuard] },

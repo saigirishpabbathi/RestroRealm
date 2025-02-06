@@ -32,6 +32,12 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDto createRole(RoleDto roleDto) {
         Role role = modelMapper.map(roleDto, Role.class);
+        role.setPermissions(
+                roleDto.getPermissions()
+                        .stream()
+                        .map(permissionDto -> modelMapper
+                                .map(permissionDto, Permission.class))
+                        .collect(Collectors.toSet()));
         Role savedRole = roleRepository.save(role);
         return modelMapper.map(savedRole, RoleDto.class);
     }
@@ -41,6 +47,12 @@ public class RoleServiceImpl implements RoleService {
         Role existingRole = modelMapper.map(getRoleById(roleId), Role.class);
         existingRole.setDescription(roleDto.getDescription());
         existingRole.setName(roleDto.getName());
+        existingRole.setPermissions(
+                roleDto.getPermissions()
+                        .stream()
+                        .map(permissionDto -> modelMapper
+                                .map(permissionDto, Permission.class))
+                        .collect(Collectors.toSet()));
         Role savedRole = roleRepository.save(existingRole);
         return modelMapper.map(savedRole, RoleDto.class);
     }

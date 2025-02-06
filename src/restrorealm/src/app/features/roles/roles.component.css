@@ -351,3 +351,8 @@
     gap: 8px;
     margin-top: 24px;
 }
+
+.permissions-list{
+    max-height: 197px;
+    overflow: scroll;
+}
