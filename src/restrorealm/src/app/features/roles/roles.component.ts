@@ -80,18 +80,21 @@ export class RoleComponent {
 
     onPermissionChange(permission: any, event: Event) {
         const isChecked = (event.target as HTMLInputElement).checked;
-        let updatedPermissions = this.roleForm.value.permissions || [];
+        let updatedPermissions = [...(this.roleForm.value.permissions || [])];
         if (isChecked) {
-            if (!updatedPermissions.some((p: any) => p.permissionId === permission.permissionId)) {
-                updatedPermissions = [...updatedPermissions, permission];
+            if (!updatedPermissions.some((p: any) => p.id === permission.id)) {
+                updatedPermissions.push(permission);
             }
         } else {
-            updatedPermissions = updatedPermissions.filter((p: any) => p.permissionId !== permission.permissionId);
+            updatedPermissions = updatedPermissions.filter((p: any) => p.id !== permission.id);
         }
         this.roleForm.patchValue({ permissions: updatedPermissions });
     }
-       
     
+    isPermissionChecked(permission: any): boolean {
+        const selectedPermissions = this.roleForm.value.permissions || [];
+        return selectedPermissions.some((p: any) => p.id === permission.id);
+    }
 
     private showToast(message: string, type: 'success' | 'error') {
         this.toast = { message, type };
@@ -155,10 +158,6 @@ export class RoleComponent {
                 error: (error) => this.showToast(error.message, 'error')
             });
         }
-    }
-
-    isPermissionChecked(permission: any): boolean {
-        return this.roleForm.value.permissions?.some((p: { permissionId: any; }) => p.permissionId === permission.permissionId) || false;
     }
 
     onSubmit() {

@@ -73,6 +73,7 @@
           </div>
           <div class="controls-group">
               <button 
+                  *ngIf="createSingleUser"
                   class="mdc-button mdc-button--raised" 
                   (click)="openCreateDialog()">
                   <span class="mdc-button__label">
@@ -105,8 +106,8 @@
           <td>{{ user.email }}</td>
           <td>{{ user.role.name }}</td>
           <td>
-            <button (click)="openEditDialog(user)" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
-            <button (click)="deleteUser(user.userId)" class="delete-btn"><i class="fas fa-trash"></i> Delete</button>
+            <button *ngIf="editSingleUser" (click)="openEditDialog(user)" class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+            <button *ngIf="deleteSingleUser" (click)="deleteUser(user.userId)" class="delete-btn"><i class="fas fa-trash"></i> Delete</button>
           </td>
         </tr>
       </tbody>
