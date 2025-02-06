@@ -44,10 +44,7 @@ export const routes: Routes = [
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
-<<<<<<< HEAD
     { path: 'profile', component: UserProfileComponent, canActivate:[AuthGuard] },
-=======
->>>>>>> 851f10d (Removed Homepage and Navbar adjustment)
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];
