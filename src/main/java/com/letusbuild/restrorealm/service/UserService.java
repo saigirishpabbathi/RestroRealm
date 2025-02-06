@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.service;
 
+<<<<<<< HEAD
         import com.letusbuild.restrorealm.dto.UserDto;
         import com.letusbuild.restrorealm.dto.UserResponseDto;
         import com.letusbuild.restrorealm.dto.UserUpdateDto;
@@ -10,6 +11,16 @@ package com.letusbuild.restrorealm.service;
 
         import java.util.List;
         import java.util.Optional;
+=======
+import com.letusbuild.restrorealm.dto.UserDto;
+import com.letusbuild.restrorealm.dto.UserResponseDto;
+import com.letusbuild.restrorealm.dto.UserUpdateDto;
+import com.letusbuild.restrorealm.entity.User;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 
 public interface UserService {
     UserDto getUserById(Long userId);
@@ -21,6 +32,7 @@ public interface UserService {
 
     Optional<User> getUserByEmail(String email);
 
+<<<<<<< HEAD
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
     UserResponseDto getCurrentUser();
@@ -28,4 +40,20 @@ public interface UserService {
     UserResponseDto updateCurrentUser(UserUpdateDto userUpdateDto);
     String uploadProfileImage(MultipartFile imageFile);
     void deleteUser(Long id);
+=======
+    UserDto getUserById(Long userId);
+
+    List<UserResponseDto> getAllUsers();
+
+    UserResponseDto updateUser(Long id, UserUpdateDto userUpdateDto);
+
+    UserResponseDto getCurrentUser();
+
+    UserResponseDto updateCurrentUser(UserUpdateDto userUpdateDto);
+
+    String uploadProfileImage(MultipartFile imageFile);
+
+    void deleteUser(Long id);
+
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 }

@@ -13,7 +13,10 @@ import { PermissionsComponent } from './features/permissions/permissions.compone
 import { MenuAddonComponent } from './features/menu-addon/menu-addon.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { MenuPageComponent } from './pages/menu-page/menu-page.component';
+<<<<<<< HEAD
 import { UserProfileComponent } from './features/user-profile/user-profile.component';
+=======
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 import { UserListComponent } from './features/user-list/user-list.component';
 
 export const routes: Routes = [
@@ -25,7 +28,13 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
+<<<<<<< HEAD
     { path: 'menu', component: MenuComponent, canActivate: [AuthGuard] },
+=======
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+    { path: 'settings/users', component: UserListComponent, canActivate: [AuthGuard] },
+    { path: 'settings/menu', component: MenuComponent, canActivate: [AuthGuard] },
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
     { path: 'settings/category', component: CategoryComponent, canActivate: [AuthGuard] },
     { path: 'settings/role', component: RoleComponent, canActivate: [AuthGuard] },
     { path: 'settings/permission', component: PermissionsComponent, canActivate: [AuthGuard] },

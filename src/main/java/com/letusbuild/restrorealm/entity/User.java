@@ -8,7 +8,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+<<<<<<< HEAD
 import java.util.stream.Collectors;
+=======
+import java.util.Date;
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 
 @Entity
 @Table(name = "user")
@@ -34,6 +38,12 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     private boolean enabled = true;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
+    @Column
+    private Date dateOfBirth;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)

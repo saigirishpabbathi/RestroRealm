@@ -4,11 +4,20 @@ import com.letusbuild.restrorealm.dto.PermissionDto;
 import com.letusbuild.restrorealm.dto.UserDto;
 import com.letusbuild.restrorealm.dto.UserResponseDto;
 import com.letusbuild.restrorealm.dto.UserUpdateDto;
+<<<<<<< HEAD
+=======
+import com.letusbuild.restrorealm.entity.Role;
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 import com.letusbuild.restrorealm.entity.User;
 import com.letusbuild.restrorealm.repository.UserRepository;
+import com.letusbuild.restrorealm.service.RoleService;
 import com.letusbuild.restrorealm.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+<<<<<<< HEAD
+=======
+import org.springframework.security.authentication.BadCredentialsException;
+>>>>>>> 146a590 (Role Permission UI, Users list and minor bug fixes)
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +37,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -139,5 +149,73 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
+    }
+
+    @Override
+    public List<UserResponseDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream().map(user -> modelMapper.map(user, UserResponseDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserResponseDto getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return modelMapper.map(user, UserResponseDto.class);
+    }
+
+    @Override
+    public UserResponseDto updateUser(Long id, UserUpdateDto userUpdateDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(userUpdateDto.getName());
+        user.setEmail(userUpdateDto.getEmail());
+        user.setDateOfBirth(userUpdateDto.getDateOfBirth());
+        Role role = modelMapper.map(roleService.getRoleById(userUpdateDto.getRoleId()), Role.class)  ;
+        user.setRole(role);
+        return modelMapper.map(userRepository.save(user), UserResponseDto.class);
+    }
+
+    @Override
+    public UserResponseDto updateCurrentUser(UserUpdateDto userUpdateDto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(userUpdateDto.getName());
+        user.setEmail(userUpdateDto.getEmail());
+        return modelMapper.map(userRepository.save(user), UserResponseDto.class);
+    }
+
+    @Override
+    public String uploadProfileImage(MultipartFile imageFile) {
+        try {
+            String uploadDir = "src/main/resources/static/images/profiles/";
+            Files.createDirectories(Paths.get(uploadDir));
+
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + fileName);
+            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            String imageUrl = "/images/profiles/" + fileName;
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            user.setProfileImageUrl(imageUrl);
+            userRepository.save(user);
+
+            return imageUrl;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to store file", e);
+        }
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 }

@@ -111,6 +111,20 @@
                     ></textarea>
                 </div>
 
+                <div class="form-field">
+                    <label>Permissions</label>
+                    <div class="permissions-list">
+                        <div *ngFor="let permission of permissions" class="permission-item">
+                            <input 
+                                type="checkbox"
+                                [checked]="isPermissionChecked(permission)"
+                                (change)="onPermissionChange(permission, $event)"
+                            />
+                            <label>{{ permission.name }} - {{ permission.description }}</label>
+                        </div>
+                    </div>
+                </div>                               
+                
                 <div class="dialog-actions">
                     <button 
                         type="button" 

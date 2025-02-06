@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    if (this.authService.isLoggedIn$) {
+    if (this.authService.getRefreshToken()) {
       this.toast = { message: 'Already LoggedIn! Redirecting to Dashboard!', type: 'success' };
       setTimeout(() => {
         this.toast = null;
