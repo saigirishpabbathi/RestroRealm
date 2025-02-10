@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "table_entity")
@@ -32,6 +34,6 @@ public class TableEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String metadata;
 
-//    @OneToMany(mappedBy = "table")
-//    private List<ReservationEntity> reservations; // One table can have many reservations
+    @OneToMany(mappedBy = "table")
+    private List<ReservationEntity> reservations;
 }

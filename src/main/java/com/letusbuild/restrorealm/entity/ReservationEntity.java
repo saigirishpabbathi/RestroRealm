@@ -22,8 +22,8 @@ public class ReservationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many reservations can belong to one table
-    @JoinColumn(name = "table_id", nullable = false) // Foreign key to TableEntity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_id", nullable = false)
     private TableEntity table;
 
     @Column(nullable = false)
@@ -39,10 +39,10 @@ public class ReservationEntity {
     private LocalTime reservationTime;
 
     @Column(nullable = false)
-    private Integer duration; // Duration in hours
+    private Integer duration;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ReservationStatus status; // ACTIVE, CANCELED
+    private ReservationStatus status;
 }
 

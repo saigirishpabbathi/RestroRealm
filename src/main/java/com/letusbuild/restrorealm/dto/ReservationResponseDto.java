@@ -28,6 +28,6 @@ public class ReservationResponseDto {
 
     private Integer duration;
 
-    private String status; // ACTIVE or CANCELED
+    private String status;
 }
 

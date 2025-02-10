@@ -14,6 +14,7 @@ import { CategoryPageComponent } from './pages/category-page/category-page.compo
 import { MenuPageComponent } from './pages/menu-page/menu-page.component';
 import { UserListComponent } from './features/user-list/user-list.component';
 import { UserProfileComponent } from './features/user-profile/user-profile.component';
+import { TableComponent } from './features/table/table.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+    { path: 'tables', component: TableComponent, canActivate: [AuthGuard] },
     { path: 'settings/users', component: UserListComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu', component: MenuComponent, canActivate: [AuthGuard] },
     { path: 'settings/category', component: CategoryComponent, canActivate: [AuthGuard] },
