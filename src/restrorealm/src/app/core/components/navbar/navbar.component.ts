@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { User } from '../../../shared/models/user.model';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { SidebarService } from '../../services/sidebar/sidebar.service';
+import { CartService } from '../../services/cart/cart.service';
 
 
 @Component({
@@ -23,13 +24,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isSidebarOpen = true;
   showProfileDropdown = false;
   user: User | null = null;
+  cartCount = 0;
+  private cartSubscription?: Subscription;
   private authSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private cartService : CartService
   ) {}
 
   toggleSidebar() {
@@ -68,6 +72,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+      this.cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    });
     this.authSubscription = this.authService.isLoggedIn$.subscribe({
       next: (isLoggedIn) => {
         this.isLoggedIn = isLoggedIn;

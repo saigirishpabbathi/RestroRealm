@@ -60,7 +60,6 @@ public class JwtServiceImpl {
             if (token == null || token.trim().isEmpty()) {
                 throw new IllegalArgumentException("Token is null or empty");
             }
-            System.out.println("Received JWT Token: " + token);
             Claims claim = Jwts.parser()
                     .verifyWith(getSecretKey())
                     .build()

@@ -8,6 +8,8 @@ export interface User {
 
     email: string;
 
+    dateOfBirth: any;
+
     password?: string;
 
     role?: string;

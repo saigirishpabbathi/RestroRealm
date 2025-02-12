@@ -1,0 +1,30 @@
+<div class="confirmation-container">
+    <div class="confirmation-card">
+      <div class="header">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h1>Order Confirmed!</h1>
+        <p class="order-id">Order ID: {{ orderId }}</p>
+      </div>
+  
+      <div class="order-details">
+        <h2>Order Summary</h2>
+        <div class="detail-item">
+          <span>Order Date:</span>
+          <span>{{ orderDate }}</span>
+        </div>
+        <div class="detail-item total">
+          <span>Total Paid:</span>
+          <span>${{ cartService.getTotalPrice() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+  
+      <div class="actions">
+        <p>We've sent a confirmation email to your registered address</p>
+        <a routerLink="/menu" class="return-btn">
+          <i class="fas fa-utensils"></i>
+          Back to Menu
+        </a>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,44 @@
+<div class="payment-container">
+    <h2>Payment Details</h2>
+    
+    <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+      <div class="form-group">
+        <label>Cardholder Name</label>
+        <input type="text" formControlName="cardholderName">
+        <div class="error" *ngIf="f['cardholderName'].touched && f['cardholderName'].errors">
+          * Required field
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" formControlName="cardNumber" placeholder="4242 4242 4242 4242">
+        <div class="error" *ngIf="f['cardNumber'].touched && f['cardNumber'].errors">
+          * Valid 16-digit card number required
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiration (MM/YY)</label>
+          <input type="text" formControlName="expiration" placeholder="MM/YY">
+          <div class="error" *ngIf="f['expiration'].touched && f['expiration'].errors">
+            * Valid expiration required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>CVC</label>
+          <input type="text" formControlName="cvc" placeholder="123">
+          <div class="error" *ngIf="f['cvc'].touched && f['cvc'].errors">
+            * 3 or 4 digit code required
+          </div>
+        </div>
+      </div>
+  
+      <button type="submit" [disabled]="isProcessing">
+        {{ isProcessing ? 'Processing...' : 'Complete Payment ($' + (cartService.getTotalPrice() | number:'1.2-2') + ')' }}
+      </button>
+    </form>
+  </div>
+  

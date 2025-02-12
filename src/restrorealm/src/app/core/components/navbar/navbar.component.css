@@ -175,3 +175,62 @@
 .hamburger-menu:hover {
     color: #007bff;
 }
+
+.cart-indicator {
+    position: relative;
+    margin-left: 1.5rem;
+  }
+  
+  .cart-indicator a {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .cart-indicator:hover a {
+    color: #0073e6;
+  }
+  
+  .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+  }
+  
+  .cart-indicator:hover .cart-count {
+    transform: scale(1.1);
+  }
+  
+  .fa-shopping-cart {
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .cart-indicator {
+      margin-left: 1rem;
+    }
+    
+    .cart-count {
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+    }
+    
+    .fa-shopping-cart {
+      font-size: 1.1rem;
+    }
+  }

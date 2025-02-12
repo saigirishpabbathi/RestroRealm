@@ -24,6 +24,13 @@
             <li><a routerLink="/about">About Us</a></li>
         </ul>
     </div>
+
+    <div class="cart-indicator">
+        <a routerLink="/cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">{{ cartCount }}</span>
+        </a>
+    </div>
     <div class="navbar-right">
         <div *ngIf="isLoggedIn; else loginButtons" class="profile-container">
             <div class="user-profile" (click)="toggleProfileDropdown()">

@@ -15,11 +15,16 @@ import { MenuPageComponent } from './pages/menu-page/menu-page.component';
 import { UserListComponent } from './features/user-list/user-list.component';
 import { UserProfileComponent } from './features/user-profile/user-profile.component';
 import { TableComponent } from './features/table/table.component';
+import { CartComponent } from './core/components/cart/cart.component';
+import { CheckoutComponent } from './features/checkout/checkout.component';
+import { PaymentComponent } from './features/payment/payment.component';
+import { OrderConfirmationComponent } from './features/order-confirmation/order-confirmation.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'categories', component: CategoryPageComponent },
+    { path: 'menu', component: MenuPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
     { path: 'tables', component: TableComponent, canActivate: [AuthGuard] },
@@ -32,6 +37,10 @@ export const routes: Routes = [
     { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
     { path: 'profile', component: UserProfileComponent, canActivate:[AuthGuard] },
+    { path: 'cart', component: CartComponent },
+    { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+    { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard] },
+    { path: 'order-confirmation/:id', component: OrderConfirmationComponent },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];
