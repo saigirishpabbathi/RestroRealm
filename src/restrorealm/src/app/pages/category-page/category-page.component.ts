@@ -20,6 +20,9 @@ export class CategoryPageComponent implements OnInit {
   userHasPermission: boolean = false; 
   imageUrl = environment.imageUrl;
   currentTime = new Date();
+  showAgeVerification: boolean = false;
+  tempBirthDate: string = '';
+  private ageVerificationResolve: ((value: boolean) => void) | null = null;
 
   constructor(
     private menuService: MenuService, 
@@ -32,11 +35,11 @@ export class CategoryPageComponent implements OnInit {
   }
 
   fetchCategories(): void {
-    this.menuService.getCategories().subscribe({
+    this.menuService.getCategoriesNoHeaders().subscribe({
       next: (categories) => {
         this.categories = categories.map(category => ({
           ...category,
-          imageUrl: category.imageUrl || 'assets/placeholder.png' // Default image until backend supports it
+          imageUrl: category.imageUrl || 'assets/placeholder.png'
         }));
       },
       error: (err) => {
@@ -50,13 +53,12 @@ export class CategoryPageComponent implements OnInit {
       alert(`This category is only available between ${category.availableStartTime} and ${category.availableEndTime}`);
       return;
     }
-
+  
     if (category.ageRestricted) {
       const dob = this.authService.getUserInfo()?.dateOfBirth;
+      const userAge = this.calculateAge(dob);
 
-      const userAge = this.calculateUserAge(dob);
-      
-      if (!userAge) {
+      if (userAge === null) {
         this.verifyAge().then(verified => {
           if (verified) this.redirectToMenu(category.name);
         });
@@ -72,14 +74,6 @@ export class CategoryPageComponent implements OnInit {
     this.redirectToMenu(category.name);
   }
 
-  calculateUserAge(dob: any) {
-    if (!dob) return null;
-    const birthDate = new Date(dob);
-    const ageDifMs = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
-  }
-  
   private isCategoryAvailable(category: Category): boolean {
     const now = this.currentTime;
     const [startHour, startMinute] = category.availableStartTime.split(':').map(Number);
@@ -95,23 +89,53 @@ export class CategoryPageComponent implements OnInit {
   }
 
   private verifyAge(): Promise<boolean> {
+    this.showAgeVerification = true;
     return new Promise((resolve) => {
-      // const dialogRef = this.dialog.open(AgeVerificationDialogComponent, {
-      //   width: '400px',
-      //   disableClose: true
-      // });
-
-      // dialogRef.afterClosed().subscribe(result => {
-      //   if (result) {
-      //     this.userService.storeUserAge(result.age);
-      //     resolve(result.age >= 18);
-      //   }
-      //   resolve(false);
-      // });
+      this.ageVerificationResolve = resolve;
     });
   }
 
+  confirmAge() {
+    this.showAgeVerification = false;
+    if (this.tempBirthDate) {
+      const birthDate = new Date(this.tempBirthDate);
+      const age = this.calculateAge(birthDate);
+      this.ageVerificationResolve?.(age !== null && age >= 18);
+    } else {
+      this.ageVerificationResolve?.(false);
+    }
+    this.resetAgeVerification();
+  }
+
+  cancelAgeVerification() {
+    this.showAgeVerification = false;
+    this.ageVerificationResolve?.(false);
+    this.resetAgeVerification();
+  }
+
+  private resetAgeVerification() {
+    this.tempBirthDate = '';
+    this.ageVerificationResolve = null;
+  }
+
+  private calculateAge(dob: string | Date | undefined): number | null {
+    if (!dob) return null;
+  
+    const birthDate = dob instanceof Date ? dob : new Date(dob);
+    if (isNaN(birthDate.getTime())) return null;
+  
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || 
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
   private redirectToMenu(categoryName: string) {
-    this.router.navigate(['/menu', categoryName]);
+    this.router.navigate(['/menu', encodeURIComponent(categoryName)]);
   }
 }
