@@ -1,4 +1,5 @@
 package com.letusbuild.restrorealm.controller;
+import com.letusbuild.restrorealm.dto.AvailabilityResponseDto;
 import com.letusbuild.restrorealm.dto.ReservationRequestDto;
 import com.letusbuild.restrorealm.dto.ReservationResponseDto;
 import com.letusbuild.restrorealm.service.ReservationService;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -62,6 +64,28 @@ public class ReservationController {
     public ResponseEntity<Void> cancelReservation(@PathVariable Long reservationId) {
         reservationService.cancelReservation(reservationId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/availability")
+    public ResponseEntity<AvailabilityResponseDto> checkAvailableTimeSlots(
+            @RequestParam String date,
+            @RequestParam Long tableId,
+            @RequestParam int numGuests) {
+        LocalDate reservationDate = LocalDate.parse(date);
+        AvailabilityResponseDto availability = reservationService.getAvailableTimeSlots(reservationDate, tableId, numGuests);
+        return ResponseEntity.ok(availability);
+    }
+
+    // 2. Check table availability for a specific time slot
+    @GetMapping("/tables-availability")
+    public ResponseEntity<List<Long>> getAvailableTables(
+            @RequestParam String date,
+            @RequestParam String time,
+            @RequestParam int numGuests) {
+        LocalDate reservationDate = LocalDate.parse(date);
+        LocalTime reservationTime = LocalTime.parse(time);
+        List<Long> availableTables = reservationService.getAvailableTables(reservationDate, reservationTime, numGuests);
+        return ResponseEntity.ok(availableTables);
     }
 }
 
