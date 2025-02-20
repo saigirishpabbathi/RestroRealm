@@ -1,0 +1,82 @@
+/* General Container Styling */
+.reservation-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px 40px 25px 25px; /* Increased right padding */
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+  
+  /* Title */
+  .reservation-container h2 {
+    text-align: center;
+    color: #1a73e8;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  /* Input Fields and Labels */
+  label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    color: #333;
+    font-size: 14px;
+  }
+  
+  /* Input and Select Fields */
+  input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  input:focus, select:focus {
+    border-color: #1a73e8;
+    outline: none;
+    box-shadow: 0 0 5px rgba(26, 115, 232, 0.3);
+  }
+  
+  /* Buttons */
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #1a73e8;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #1557b0;
+  }
+  
+  /* Disabled Button */
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .reservation-container {
+      max-width: 90%;
+      padding: 20px;
+    }
+  
+    input, select, button {
+      font-size: 14px;
+    }
+  }
+  
