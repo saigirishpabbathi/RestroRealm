@@ -21,6 +21,7 @@ import { PaymentComponent } from './features/payment/payment.component';
 import { OrderConfirmationComponent } from './features/order-confirmation/order-confirmation.component';
 import { ReservationComponent } from './features/reservation/reservation.component';
 import { OrderGuard } from './core/guards/order/order.guard';
+import { AllReservationsComponent } from './features/all-reservations/all-reservations.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -42,8 +43,9 @@ export const routes: Routes = [
     { path: 'cart', component: CartComponent },
     { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
     { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard, OrderGuard]  },
-    { path: 'order-confirmation/:id', component: OrderConfirmationComponent },
-    { path: 'reservation', component: ReservationComponent },
+    { path: 'order-confirmation/:id', component: OrderConfirmationComponent, canActivate: [AuthGuard]  },
+    { path: 'reservation', component: ReservationComponent, canActivate: [AuthGuard]  },
+    { path: 'all-reservations', component: AllReservationsComponent, canActivate: [AuthGuard]  },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];

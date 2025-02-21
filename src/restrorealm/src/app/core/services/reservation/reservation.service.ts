@@ -7,17 +7,12 @@ import { AuthService } from '../auth/auth.service';
 @Injectable({ providedIn: 'root' })
 export class ReservationService {
   private apiUrl = environment.apiUrl;
-  
-  private readonly tablesSubject = new BehaviorSubject<any[]>([]);
-  private readonly tables$ = this.tablesSubject.asObservable();
-
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object, 
     private authService: AuthService
   ) {}
 
-  /** Get Authorization Headers */
   private getHeaders() {
     return new HttpHeaders({
       'Content-Type': 'application/json',
@@ -25,7 +20,6 @@ export class ReservationService {
     });
   }
 
-  /** Fetch available tables based on date, time, and guests */
   getAvailableTables(date: string, time: string, numGuests: number): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.apiUrl}/reservations/tables-availability?date=${date}&time=${time}&numGuests=${numGuests}`,
@@ -33,7 +27,6 @@ export class ReservationService {
     );
   }
 
-  /** Fetch available time slots for a specific table */
   getAvailableTimeSlots(date: string, tableId: number, numGuests: number): Observable<{ availableSlots: string[] }> {
     return this.http.get<{ availableSlots: string[] }>(
       `${this.apiUrl}/reservations/availability?date=${date}&tableId=${tableId}&numGuests=${numGuests}`,
@@ -41,12 +34,15 @@ export class ReservationService {
     );
   }
 
-  /** Create a new reservation */
   createReservation(reservationData: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiUrl}/reservations`, 
       reservationData, 
       { headers: this.getHeaders() }
     );
+  }
+
+  getReservations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/reservations`, { headers: this.getHeaders() });
   }
 }

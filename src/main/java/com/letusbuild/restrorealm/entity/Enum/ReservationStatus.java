@@ -1,5 +1,5 @@
 package com.letusbuild.restrorealm.entity.Enum;
 
 public enum ReservationStatus {
-    ACTIVE,CANCELED
+    ACTIVE, CANCELED, OCCUPIED, COMPLETED
 }

@@ -73,9 +73,10 @@ export class ReservationComponent {
       numGuests: this.numGuests,
       reservationDate: this.date,
       reservationTime: this.selectedTime,
-      duration: this.duration, // Taking duration from the user input
+      duration: this.duration,
       customerName: `${this.firstName} ${this.lastName}`,
-      customerContact: this.phone
+      customerContact: this.phone,
+      email: this.email
     };
 
     this.reservationService.createReservation(reservationData).subscribe({

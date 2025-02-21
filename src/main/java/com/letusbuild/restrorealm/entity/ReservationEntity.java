@@ -2,6 +2,7 @@ package com.letusbuild.restrorealm.entity;
 
 import com.letusbuild.restrorealm.entity.Enum.ReservationStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +32,12 @@ public class ReservationEntity {
 
     @Column(nullable = false)
     private String customerContact;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private Integer numGuests;
 
     @Column(nullable = false)
     private LocalDate reservationDate;

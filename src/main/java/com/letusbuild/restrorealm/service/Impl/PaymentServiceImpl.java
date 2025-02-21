@@ -42,22 +42,38 @@ public class PaymentServiceImpl implements PaymentService {
         Order order = orderRepository.findById(requestDto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         try {
-            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount((long) (requestDto.getAmount() * 100))
-                    .setCurrency(requestDto.getCurrency())
-                    .addPaymentMethodType("card")
-                    .setPaymentMethod(requestDto.getPaymentMethodId())
-                    .setConfirm(true)
-                    .build();
-            PaymentIntent paymentIntent = PaymentIntent.create(params);
-            PaymentEntity payment = PaymentEntity.builder()
-                    .order(order)
-                    .paymentId(paymentIntent.getId())
-                    .status(paymentIntent.getStatus())
-                    .amount(requestDto.getAmount())
-                    .paymentMethod(requestDto.getPaymentMethodId())
-                    .createdAt(LocalDateTime.now())
-                    .build();
+            if (requestDto.getPaymentMethodId().startsWith("cash-")) {
+                PaymentEntity payment = new PaymentEntity();
+                payment.setOrder(order);
+                payment.setAmount(requestDto.getAmount());
+                payment.setStatus("CASHIER_PENDING");
+                payment.setPaymentMethod(requestDto.getPaymentMethodId());
+                payment.setCreatedAt(LocalDateTime.now());
+                PaymentEntity savedPayment = paymentRepository.save(payment);
+                PaymentResponseDto responseDto = new PaymentResponseDto();
+                responseDto.setPaymentId(savedPayment.getPaymentId());
+                responseDto.setStatus(savedPayment.getStatus());
+                responseDto.setAmount(requestDto.getAmount());
+                responseDto.setOrder(modelMapper.map(order, OrderResponseDto.class));
+                return responseDto;
+            } else {
+                PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                        .setAmount((long) (requestDto.getAmount() * 100))
+                        .setCurrency(requestDto.getCurrency())
+                        .addPaymentMethodType("card")
+                        .addPaymentMethodType("paypal")
+                        .setPaymentMethod(requestDto.getPaymentMethodId())
+                        .setConfirm(true)
+                        .build();
+                PaymentIntent paymentIntent = PaymentIntent.create(params);
+                PaymentEntity payment = PaymentEntity.builder()
+                        .order(order)
+                        .paymentId(paymentIntent.getId())
+                        .status(paymentIntent.getStatus())
+                        .amount(requestDto.getAmount())
+                        .paymentMethod(requestDto.getPaymentMethodId())
+                        .createdAt(LocalDateTime.now())
+                        .build();
             paymentRepository.save(payment);
             PaymentResponseDto responseDto = new PaymentResponseDto();
             responseDto.setPaymentId(paymentIntent.getId());
@@ -65,6 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
             responseDto.setAmount(requestDto.getAmount());
             responseDto.setOrder(modelMapper.map(order, OrderResponseDto.class));
             return responseDto;
+            }
         } catch (StripeException e) {
             throw new RuntimeException("Payment processing failed: " + e.getMessage());
         }

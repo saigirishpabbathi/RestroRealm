@@ -16,20 +16,13 @@ export class OrderGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const orderId = route.queryParamMap.get('orderId');
-    
-    console.log('OrderGuard checking orderId:', orderId);
-
     if (!orderId) {
-      console.warn('No orderId in URL');
       this.router.navigate(['/checkout']);
       return of(false);
     }
-
     return this.orderService.getOrder(orderId).pipe(
-      tap(order => console.log('Order found:', order)),
       map(order => {
         if (order.status !== OrderStatus.PENDING) {
-          console.warn('Order not pending. Status:', order.status);
           this.router.navigate(['/checkout']);
           return false;
         }

@@ -74,9 +74,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     ).subscribe(order => {
       if (!order) return;
-      console.log('Order:', order);
       this.orderDetails = order;
-      if (order.payment?.status === 'succeeded') {
+      if (order.payment?.status === 'succeeded' || order.payment?.status === 'CASHIER_PENDING') {
         this.router.navigate(['/order-confirmation', order.orderNumber]);
         return;
       }
@@ -100,7 +99,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   private initializePayment() {
     switch (this.paymentMethod) {
       case 'cash':
-        // No initialization needed for cash
         break;
       case 'credit':
       case 'debit':
@@ -270,7 +268,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.orderService.updateOrderPayment(paymentData)
       ) as PaymentResponse;
   
-      if (response.status === 'succeeded') {
+      if (response.status === 'succeeded' || response.status === 'CASHIER_PENDING') {
         this.cartService.clearCart();
         this.router.navigate(['/order-confirmation', this.orderDetails.orderNumber]);
       } else {

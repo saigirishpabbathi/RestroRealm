@@ -31,11 +31,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDTO) {
-        // Fetch the table entity to ensure it's managed
         TableEntity table = tableRepository.findById(reservationRequestDTO.getTableId())
                 .orElseThrow(() -> new RuntimeException("Table not found with ID: " + reservationRequestDTO.getTableId()));
 
-        // Check for overlapping reservations
         List<ReservationEntity> existingReservations = reservationRepository.findByTableIdAndReservationDateAndStatus(
                 reservationRequestDTO.getTableId(),
                 reservationRequestDTO.getReservationDate(),
@@ -48,27 +46,21 @@ public class ReservationServiceImpl implements ReservationService {
         if (hasOverlap) {
             throw new RuntimeException("Table is already reserved for the requested time.");
         }
-
-        // Map DTO to Entity
         ReservationEntity reservation = new ReservationEntity();
-        reservation.setTable(table); // Associate with the fetched table
+        reservation.setTable(table);
         reservation.setCustomerName(reservationRequestDTO.getCustomerName());
         reservation.setCustomerContact(reservationRequestDTO.getCustomerContact());
+        reservation.setEmail(reservationRequestDTO.getEmail());
+        reservation.setNumGuests(reservationRequestDTO.getNumGuests());
         reservation.setReservationDate(reservationRequestDTO.getReservationDate());
         reservation.setReservationTime(reservationRequestDTO.getReservationTime());
         reservation.setDuration(reservationRequestDTO.getDuration());
         reservation.setStatus(ReservationStatus.ACTIVE);
 
-        // Save the reservation explicitly
         ReservationEntity savedReservation = reservationRepository.save(reservation);
 
-        // Map Entity to DTO
         return modelMapper.map(savedReservation, ReservationResponseDto.class);
     }
-
-
-
-
 
     private boolean overlaps(ReservationEntity existingReservation, ReservationRequestDto request) {
         LocalTime existingStart = existingReservation.getReservationTime();
@@ -76,16 +68,11 @@ public class ReservationServiceImpl implements ReservationService {
 
         LocalTime requestedStart = request.getReservationTime();
         LocalTime requestedEnd = requestedStart.plusHours(request.getDuration());
-
-        // Check for non-overlapping conditions:
-        // 1. The requested reservation ends before the existing reservation starts.
-        // 2. The requested reservation starts after the existing reservation ends.
         return !(requestedEnd.isBefore(existingStart) || requestedStart.isAfter(existingEnd));
     }
 
     @Override
     public List<ReservationResponseDto> getAllReservations() {
-        // Fetch all reservations and map to DTOs
         return reservationRepository.findAll()
                 .stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
@@ -94,7 +81,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationResponseDto> getReservationsByTable(Long tableId) {
-        // Fetch reservations for the table and map to DTOs
         return reservationRepository.findByTableId(tableId)
                 .stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
@@ -103,7 +89,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationResponseDto> getReservationsByDate(LocalDate date) {
-        // Fetch reservations for the date and map to DTOs
         return reservationRepository.findByReservationDate(date)
                 .stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
@@ -113,18 +98,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public ReservationResponseDto updateReservation(Long reservationId, ReservationRequestDto reservationRequestDTO) {
-        // Find the existing reservation
         ReservationEntity existingReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
-
-        // Fetch existing reservations for the same table, date, and active status
         List<ReservationEntity> existingReservations = reservationRepository.findByTableIdAndReservationDateAndStatus(
                 existingReservation.getTable().getId(),
                 reservationRequestDTO.getReservationDate(),
                 ReservationStatus.ACTIVE
         );
-
-        // Exclude the current reservation from the overlap check
         boolean hasOverlap = existingReservations.stream()
                 .filter(reservation -> !reservation.getId().equals(existingReservation.getId()))
                 .anyMatch(reservation -> overlaps(reservation, reservationRequestDTO));
@@ -132,47 +112,32 @@ public class ReservationServiceImpl implements ReservationService {
         if (hasOverlap) {
             throw new RuntimeException("Table is already reserved for the requested time.");
         }
-
-        // Update the reservation fields
         existingReservation.setCustomerName(reservationRequestDTO.getCustomerName());
         existingReservation.setCustomerContact(reservationRequestDTO.getCustomerContact());
         existingReservation.setReservationDate(reservationRequestDTO.getReservationDate());
         existingReservation.setReservationTime(reservationRequestDTO.getReservationTime());
         existingReservation.setDuration(reservationRequestDTO.getDuration());
-
-        // Save the updated reservation
         ReservationEntity updatedReservation = reservationRepository.save(existingReservation);
-
-        // Map to DTO
         return modelMapper.map(updatedReservation, ReservationResponseDto.class);
     }
 
 
     @Override
     public void cancelReservation(Long reservationId) {
-        // Find the reservation
         ReservationEntity reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("ReservationEntity not found"));
 
-        // Mark as canceled
         reservation.setStatus(ReservationStatus.CANCELED);
         reservationRepository.save(reservation);
     }
 
-    // 1. Get available time slots
     public AvailabilityResponseDto getAvailableTimeSlots(LocalDate date, Long tableId, int numGuests) {
-        // Define all possible time slots (every 30 minutes from 10:00 AM to 10:00 PM)
         List<LocalTime> allSlots = generateTimeSlots(LocalTime.of(10, 0), LocalTime.of(22, 0), 30);
-
-        // Get reservations for the given date, table, and guest count
         List<ReservationEntity> reservations = reservationRepository.findByReservationDateAndTableAndCapacity(date, tableId, numGuests);
-
-        // Filter out unavailable slots based on reservations and duration
         List<LocalTime> availableSlots = new ArrayList<>(allSlots);
         for (ReservationEntity reservation : reservations) {
             LocalTime startTime = reservation.getReservationTime();
             LocalTime endTime = startTime.plusHours(reservation.getDuration());
-
             availableSlots.removeIf(slot -> !slot.isBefore(startTime) && slot.isBefore(endTime));
         }
 
