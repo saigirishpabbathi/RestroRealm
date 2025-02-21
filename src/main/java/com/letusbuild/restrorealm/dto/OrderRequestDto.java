@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.dto;
 
+import com.letusbuild.restrorealm.entity.Enum.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderRequestDto {
-
-    private Long tableId; // ID of the table placing the order
-
+    private Long tableId;
+    private String orderNumber;
     private String customerName;
-
-    private List<OrderItemRequestDto> orderItems; // List of items to be ordered
+    private String street1;
+    private String street2;
+    private String city;
+    private String state;
+    private String postalCode;
+    private List<OrderItemRequestDto> orderItems;
+    private OrderStatus status;
 }
 

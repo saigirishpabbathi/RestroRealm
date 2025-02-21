@@ -33,13 +33,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
-        // Fetch Table
-        TableEntity table = tableRepository.findById(orderRequestDto.getTableId())
-                .orElseThrow(() -> new IllegalArgumentException("Table not found"));
-
-        // Map Order
         Order order = new Order();
-        order.setTable(table);
+        if(orderRequestDto.getTableId() != null) {
+            TableEntity table = tableRepository.findById(orderRequestDto.getTableId())
+                    .orElseThrow(() -> new IllegalArgumentException("Table not found"));
+            order.setTable(table);
+        } else {
+            TableEntity table = tableRepository.findById(0L)
+                    .orElseThrow(() -> new IllegalArgumentException("Table not found"));
+            order.setTable(table);
+        }
         order.setCustomerName(orderRequestDto.getCustomerName());
         order.setOrderItems(orderRequestDto.getOrderItems().stream()
                 .map(orderItemDto -> {
@@ -53,15 +56,18 @@ public class OrderServiceImpl implements OrderService {
                     return orderItem;
                 }).collect(Collectors.toList()));
 
-        // Calculate Total Amount
         double totalAmount = order.getOrderItems().stream()
                 .mapToDouble(item -> item.getPrice()*item.getQuantity())
                 .sum();
+        order.setOrderNumber(orderRequestDto.getOrderNumber());
+        order.setStatus(orderRequestDto.getStatus());
         order.setTotalAmount(totalAmount);
-
-        // Save Order
+        order.setStreet1(orderRequestDto.getStreet1());
+        order.setStreet2(orderRequestDto.getStreet2());
+        order.setCity(orderRequestDto.getCity());
+        order.setState(orderRequestDto.getState());
+        order.setPostalCode(orderRequestDto.getPostalCode());
         Order savedOrder = orderRepository.save(order);
-
         return modelMapper.map(savedOrder, OrderResponseDto.class);
     }
 

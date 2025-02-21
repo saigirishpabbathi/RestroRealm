@@ -1,4 +1,5 @@
 package com.letusbuild.restrorealm.service.Impl;
+import com.letusbuild.restrorealm.dto.OrderResponseDto;
 import com.letusbuild.restrorealm.dto.PaymentRequestDto;
 import com.letusbuild.restrorealm.dto.PaymentResponseDto;
 import com.letusbuild.restrorealm.dto.RefundRequestDto;
@@ -14,6 +15,8 @@ import com.stripe.model.Refund;
 import com.stripe.param.PaymentIntentConfirmParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.RefundCreateParams;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,65 +26,45 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final ModelMapper modelMapper;
 
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, OrderRepository orderRepository) {
-        this.paymentRepository = paymentRepository;
-        this.orderRepository = orderRepository;
-    }
-
     @Override
     public PaymentResponseDto processPayment(PaymentRequestDto requestDto) {
         Stripe.apiKey = stripeSecretKey;
-
-        // Fetch Order
         Order order = orderRepository.findById(requestDto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-
         try {
-            // Create a PaymentIntent
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount((long) (requestDto.getAmount() * 100)) // Convert to cents
+                    .setAmount((long) (requestDto.getAmount() * 100))
                     .setCurrency(requestDto.getCurrency())
                     .addPaymentMethodType("card")
-                    .setPaymentMethod(requestDto.getPaymentMethodId()) // ✅ Attach PaymentMethod
-                    .setConfirm(true) // ✅ Confirm at the time of creation
+                    .setPaymentMethod(requestDto.getPaymentMethodId())
+                    .setConfirm(true)
                     .build();
-
             PaymentIntent paymentIntent = PaymentIntent.create(params);
-
-            // Save payment in DB
             PaymentEntity payment = PaymentEntity.builder()
-                    .order(order) // Link order to payment
+                    .order(order)
                     .paymentId(paymentIntent.getId())
                     .status(paymentIntent.getStatus())
                     .amount(requestDto.getAmount())
                     .paymentMethod(requestDto.getPaymentMethodId())
                     .createdAt(LocalDateTime.now())
                     .build();
-
-//            PaymentIntentConfirmParams confirmParams = PaymentIntentConfirmParams.builder()
-//                    .setPaymentMethod(requestDto.getPaymentMethodId()) // Attach the payment method
-//                    .build();
-//
-//            PaymentIntent confirmedIntent = paymentIntent.confirm(confirmParams);
-
             paymentRepository.save(payment);
-
-            // Return response
             PaymentResponseDto responseDto = new PaymentResponseDto();
             responseDto.setPaymentId(paymentIntent.getId());
             responseDto.setStatus(paymentIntent.getStatus());
             responseDto.setAmount(requestDto.getAmount());
-
+            responseDto.setOrder(modelMapper.map(order, OrderResponseDto.class));
             return responseDto;
-
         } catch (StripeException e) {
             throw new RuntimeException("Payment processing failed: " + e.getMessage());
         }
