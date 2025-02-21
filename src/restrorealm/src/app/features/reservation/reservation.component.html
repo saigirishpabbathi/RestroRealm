@@ -1,0 +1,48 @@
+<div class="reservation-container">
+    <h2>Make a Reservation</h2>
+  
+    <!-- Step 1: Select Date, Time & Guests -->
+    <label>Select Date:</label>
+    <input type="date" [(ngModel)]="date" required (change)="fetchAvailableTables()" />
+  
+    <label>Select Time:</label>
+    <input type="time" [(ngModel)]="time" required (change)="fetchAvailableTables()" />
+  
+    <label>Number of Guests:</label>
+    <input type="number" [(ngModel)]="numGuests" min="1" required (change)="fetchAvailableTables()" />
+  
+    <!-- Step 2: Select an Available Table -->
+    <label>Select Table:</label>
+    <select [(ngModel)]="selectedTableId" (change)="fetchAvailableTimeSlots()" required>
+      <option *ngFor="let table of availableTables" [value]="table">{{ table }}</option>
+    </select>
+  
+    <!-- Step 3: Show Available Time Slots -->
+    <label>Available Time Slots:</label>
+    <select [(ngModel)]="selectedTime" required>
+      <option *ngFor="let slot of availableSlots" [value]="slot">{{ slot }}</option>
+    </select>
+  
+    <!-- Step 4: User Inputs Duration -->
+    <label>Duration (in hours):</label>
+    <input type="number" [(ngModel)]="duration" min="1" required />
+  
+    <!-- Step 5: Collect User Details if Not Logged In -->
+    <div *ngIf="!isLoggedIn">
+      <label>First Name:</label>
+      <input type="text" [(ngModel)]="firstName" required />
+  
+      <label>Last Name:</label>
+      <input type="text" [(ngModel)]="lastName" required />
+  
+      <label>Email:</label>
+      <input type="email" [(ngModel)]="email" required />
+  
+      <label>Phone Number:</label>
+      <input type="tel" [(ngModel)]="phone" required />
+    </div>
+  
+    <!-- Step 6: Submit Reservation -->
+    <button (click)="makeReservation()">Reserve Now</button>
+  </div>
+  

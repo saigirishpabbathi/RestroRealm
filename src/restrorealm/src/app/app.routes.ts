@@ -19,6 +19,7 @@ import { CartComponent } from './core/components/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { PaymentComponent } from './features/payment/payment.component';
 import { OrderConfirmationComponent } from './features/order-confirmation/order-confirmation.component';
+import { ReservationComponent } from './features/reservation/reservation.component';
 import { OrderGuard } from './core/guards/order/order.guard';
 
 export const routes: Routes = [
@@ -42,6 +43,7 @@ export const routes: Routes = [
     { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
     { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard, OrderGuard]  },
     { path: 'order-confirmation/:id', component: OrderConfirmationComponent },
+    { path: 'reservation', component: ReservationComponent },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];

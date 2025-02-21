@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.service.Impl;
 
+import com.letusbuild.restrorealm.dto.AvailabilityResponseDto;
 import com.letusbuild.restrorealm.dto.ReservationRequestDto;
 import com.letusbuild.restrorealm.dto.ReservationResponseDto;
 import com.letusbuild.restrorealm.entity.Enum.ReservationStatus;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,6 +157,41 @@ public class ReservationServiceImpl implements ReservationService {
         // Mark as canceled
         reservation.setStatus(ReservationStatus.CANCELED);
         reservationRepository.save(reservation);
+    }
+
+    // 1. Get available time slots
+    public AvailabilityResponseDto getAvailableTimeSlots(LocalDate date, Long tableId, int numGuests) {
+        // Define all possible time slots (every 30 minutes from 10:00 AM to 10:00 PM)
+        List<LocalTime> allSlots = generateTimeSlots(LocalTime.of(10, 0), LocalTime.of(22, 0), 30);
+
+        // Get reservations for the given date, table, and guest count
+        List<ReservationEntity> reservations = reservationRepository.findByReservationDateAndTableAndCapacity(date, tableId, numGuests);
+
+        // Filter out unavailable slots based on reservations and duration
+        List<LocalTime> availableSlots = new ArrayList<>(allSlots);
+        for (ReservationEntity reservation : reservations) {
+            LocalTime startTime = reservation.getReservationTime();
+            LocalTime endTime = startTime.plusHours(reservation.getDuration());
+
+            availableSlots.removeIf(slot -> !slot.isBefore(startTime) && slot.isBefore(endTime));
+        }
+
+        return new AvailabilityResponseDto(availableSlots, "Available slots retrieved successfully.");
+    }
+
+    private List<LocalTime> generateTimeSlots(LocalTime start, LocalTime end, int intervalMinutes) {
+        List<LocalTime> slots = new ArrayList<>();
+        LocalTime current = start;
+        while (current.isBefore(end) || current.equals(end)) {
+            slots.add(current);
+            current = current.plusMinutes(intervalMinutes);
+        }
+        return slots;
+    }
+
+    // 2. Get available tables for a given time slot
+    public List<Long> getAvailableTables(LocalDate date, LocalTime time, int numGuests) {
+        return tableRepository.findAvailableTables(date, time, numGuests);
     }
 }
 
