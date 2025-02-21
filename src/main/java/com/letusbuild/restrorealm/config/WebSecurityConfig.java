@@ -1,5 +1,8 @@
 package com.letusbuild.restrorealm.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.letusbuild.restrorealm.config.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,9 +33,8 @@ public class WebSecurityConfig {
     private static final String[] publicRoutes = {
             "/api/v1/auth/**",
             "/api/v1/configs/**",
-            "/api/v1/category/all/",
-            "/api/v1/menu-item/all/",
-            "/api/v1/menu-item/category/**",
+            "/api/v1/category/public/**",
+            "/api/v1/menu-item/public/**",
             "/images/**",
             "/images/menu/**"
     };

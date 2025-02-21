@@ -9,7 +9,6 @@ export interface MenuItem {
   id: number;
   name: string;
   basePrice: number;
-  // Add other required properties
 }
 
 @Injectable({
@@ -88,5 +87,16 @@ export class CartService {
     }
     
     this.saveCartToStorage(items);
+  }
+
+  getItems(): CartItem[] {
+    return this.getPayload();
+  }
+
+  getPayload(): any {
+    return this.loadCartFromStorage().map(item => ({
+        menuItemId: item.menuItem.id,
+        quantity: item.quantity
+      }));
   }
 }

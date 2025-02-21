@@ -49,7 +49,7 @@ export class MenuPageComponent implements OnInit {
   fetchMenuItems(): void {
     if(!this.categoryName) {
       this.categoryName = "All";
-      this.menuService.getAllMenuItems().subscribe({
+      this.menuService.getAllMenuItemsNoHeaders().subscribe({
         next: (menuItems) => {
           this.menuItems = menuItems.map(item => ({
             ...item,
@@ -61,7 +61,7 @@ export class MenuPageComponent implements OnInit {
         }
       });
     } else {
-        this.menuService.getMenuItemsByCategoryName(this.categoryName).subscribe({
+        this.menuService.getMenuItemsByCategoryNameNoHeaders(this.categoryName).subscribe({
           next: (menuItems) => {
             this.menuItems = menuItems.map(item => ({
               ...item,

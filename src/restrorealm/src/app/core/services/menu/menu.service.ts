@@ -18,9 +18,11 @@ export class MenuService {
       @Inject(PLATFORM_ID) private platformId: Object, 
       private authService: AuthService
     ) {
-      this.getCategories();
-      this.getAllMenuItems();
-      this.getHeaders();
+      if(this.authService.getRefreshToken()) {
+        this.getHeaders();
+        this.getCategories();
+        this.getAllMenuItems();
+      }
     }
 
     private getHeaders() {
@@ -49,8 +51,16 @@ export class MenuService {
       return this.menuItems$;
   }
   
+  getAllMenuItemsNoHeaders(): Observable<any[]> {
+      return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/all/`);
+  }
+  
   getMenuItemsByCategory(categoryId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryId}`, { headers: this.getHeaders() });
+  }
+  
+  getMenuItemsByCategoryNoHeaders(categoryId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${categoryId}`);
   }
 
   getMenuItemById(itemId: string): Observable<any> {
@@ -84,11 +94,15 @@ export class MenuService {
           this.categoriesSubject.next(categories);
         },
         error: (err) => {
-          console.error('Error fetching categories:', err);
+          console.error('MenuService - Error fetching categories:', err);
         }
       });
     
     return this.categories$;
+  }
+
+  getCategoriesNoHeaders(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/category/public/all/`);
   }
   
   getCategoryById(categoryId: string): Observable<any> {
@@ -108,6 +122,10 @@ export class MenuService {
   }
 
   getMenuItemsByCategoryName(categoryName: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryName}`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${encodeURIComponent(categoryName)}`, { headers: this.getHeaders() });
+  }
+
+  getMenuItemsByCategoryNameNoHeaders(categoryName: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${encodeURIComponent(categoryName)}`);
   }
 }

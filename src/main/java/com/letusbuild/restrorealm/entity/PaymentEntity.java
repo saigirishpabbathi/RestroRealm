@@ -21,17 +21,14 @@ public class PaymentEntity {
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)
-    private Order order; // One-to-One Mapping with Order
-
-    private String paymentId; // Payment Gateway transaction ID
-    private String status; // Pending, Successful, Failed, Refunded
+    private Order order;
+    private String paymentId;
+    private String status;
     private Double amount;
-    private String paymentMethod; // Card, UPI, Wallet, etc.
-
-    private Boolean isRefunded = false; // Flag to check if refunded
-    private String refundId; // Refund transaction ID
-    private Double refundedAmount; // Amount refunded
-
+    private String paymentMethod;
+    private Boolean isRefunded = false;
+    private String refundId;
+    private Double refundedAmount;
     private LocalDateTime createdAt;
     private LocalDateTime refundedAt;
 }

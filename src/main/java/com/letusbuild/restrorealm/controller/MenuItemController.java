@@ -34,13 +34,18 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getMenuItemsByCategoryName(categoryName));
     }
 
+    @GetMapping("/public/category/{categoryName}")
+    public ResponseEntity<List<MenuItemDto>> getMenuItemsByCategoryNamePublic(@PathVariable String categoryName){
+        return ResponseEntity.ok(menuItemService.getMenuItemsByCategoryName(categoryName));
+    }
+
     @GetMapping("/")
     @PreAuthorize("hasAuthority('READ_ALL_MENU_ITEMS')")
     public ResponseEntity<List<MenuItemDto>> getAllMenuItems(){
         return ResponseEntity.ok(menuItemService.getAllMenuItems());
     }
 
-    @GetMapping("/all/")
+    @GetMapping("/public/all/")
     public ResponseEntity<List<MenuItemDto>> getAllMenuItemsPublic(){
         return ResponseEntity.ok(menuItemService.getAllMenuItems());
     }
