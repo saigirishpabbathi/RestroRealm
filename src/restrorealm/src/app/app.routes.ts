@@ -22,6 +22,7 @@ import { OrderConfirmationComponent } from './features/order-confirmation/order-
 import { ReservationComponent } from './features/reservation/reservation.component';
 import { OrderGuard } from './core/guards/order/order.guard';
 import { AllReservationsComponent } from './features/all-reservations/all-reservations.component';
+import { MyReservationsComponent } from './features/users/my-reservations/my-reservations.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -46,6 +47,7 @@ export const routes: Routes = [
     { path: 'order-confirmation/:id', component: OrderConfirmationComponent, canActivate: [AuthGuard]  },
     { path: 'reservation', component: ReservationComponent, canActivate: [AuthGuard]  },
     { path: 'all-reservations', component: AllReservationsComponent, canActivate: [AuthGuard]  },
+    { path: 'my-reservations', component: MyReservationsComponent, canActivate: [AuthGuard]  },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/login' }
 ];

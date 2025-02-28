@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -18,17 +19,10 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     @Query("SELECT r FROM ReservationEntity r WHERE r.reservationDate = :date AND r.table.id = :tableId AND r.table.capacity >= :numGuests")
     List<ReservationEntity> findByReservationDateAndTableAndCapacity(LocalDate date, Long tableId, int numGuests);
-
-    // Find all reservations for a specific table
     List<ReservationEntity> findByTableId(Long tableId);
-
-    // Find all reservations on a specific date
     List<ReservationEntity> findByReservationDate(LocalDate reservationDate);
-
-    // Find reservations for a specific table on a specific date
     List<ReservationEntity> findByTableIdAndReservationDate(Long tableId, LocalDate reservationDate);
-
-    // Find active reservations for a specific table on a specific date
     List<ReservationEntity> findByTableIdAndReservationDateAndStatus(Long tableId, LocalDate reservationDate, ReservationStatus status);
+    List<ReservationEntity> findByEmail(String email);
 }
 

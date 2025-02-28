@@ -33,6 +33,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<ReservationResponseDto>> getMyReservations() {
+        List<ReservationResponseDto> reservations = reservationService.getMyReservations();
+        return ResponseEntity.ok(reservations);
+    }
+
     @GetMapping("/table/{tableId}")
     public ResponseEntity<List<ReservationResponseDto>> getReservationsByTable(@PathVariable Long tableId) {
         List<ReservationResponseDto> reservations = reservationService.getReservationsByTable(tableId);

@@ -12,6 +12,7 @@ import com.letusbuild.restrorealm.service.ReservationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -74,6 +75,15 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationResponseDto> getAllReservations() {
         return reservationRepository.findAll()
+                .stream()
+                .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationResponseDto> getMyReservations() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return reservationRepository.findByEmail(email)
                 .stream()
                 .map(reservation -> modelMapper.map(reservation, ReservationResponseDto.class))
                 .collect(Collectors.toList());
@@ -154,7 +164,6 @@ public class ReservationServiceImpl implements ReservationService {
         return slots;
     }
 
-    // 2. Get available tables for a given time slot
     public List<Long> getAvailableTables(LocalDate date, LocalTime time, int numGuests) {
         return tableRepository.findAvailableTables(date, time, numGuests);
     }

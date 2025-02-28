@@ -45,4 +45,8 @@ export class ReservationService {
   getReservations(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/reservations`, { headers: this.getHeaders() });
   }
+
+  getMyReservations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/reservations/my`, { headers: this.getHeaders() });
+  }
 }
