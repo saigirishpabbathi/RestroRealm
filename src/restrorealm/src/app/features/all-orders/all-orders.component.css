@@ -1,0 +1,164 @@
+.admin-orders-container {
+    padding: 20px;
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      h1 {
+        margin: 0;
+      }
+      
+      .filter-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        
+        .btn {
+          padding: 8px 16px;
+          border-radius: 4px;
+          background-color: #f0f0f0;
+          border: 1px solid #ddd;
+          cursor: pointer;
+          
+          &.btn-active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0069d9;
+          }
+        }
+      }
+    }
+    
+    .orders-list {
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        th, td {
+          padding: 12px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+          background-color: #f8f9fa;
+          font-weight: 600;
+        }
+        
+        .order-item {
+          margin-bottom: 4px;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        
+        .new-order {
+          animation: highlight 1s ease-in-out;
+          background-color: rgba(255, 255, 0, 0.1);
+        }
+        
+        .new-badge {
+          display: inline-block;
+          padding: 2px 6px;
+          font-size: 12px;
+          font-weight: bold;
+          background-color: #ff5722;
+          color: white;
+          border-radius: 4px;
+          margin-left: 8px;
+        }
+        
+        .status-badge {
+          display: inline-block;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 600;
+        }
+        
+        .badge-warning {
+          background-color: #ffc107;
+          color: #212529;
+        }
+        
+        .badge-info {
+          background-color: #17a2b8;
+          color: white;
+        }
+        
+        .badge-primary {
+          background-color: #007bff;
+          color: white;
+        }
+        
+        .badge-success {
+          background-color: #28a745;
+          color: white;
+        }
+        
+        .badge-danger {
+          background-color: #dc3545;
+          color: white;
+        }
+        
+        .badge-secondary {
+          background-color: #6c757d;
+          color: white;
+        }
+        
+        .action-buttons {
+          display: flex;
+          gap: 8px;
+          
+          .btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            
+            &.btn-primary {
+              background-color: #007bff;
+              border-color: #007bff;
+              color: white;
+            }
+            
+            &.btn-info {
+              background-color: #17a2b8;
+              border-color: #17a2b8;
+              color: white;
+            }
+            
+            &.btn-success {
+              background-color: #28a745;
+              border-color: #28a745;
+              color: white;
+            }
+            
+            &.btn-danger {
+              background-color: #dc3545;
+              border-color: #dc3545;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  @keyframes highlight {
+    0% {
+      background-color: rgba(255, 255, 0, 0.4);
+    }
+    100% {
+      background-color: rgba(255, 255, 0, 0.1);
+    }
+  }

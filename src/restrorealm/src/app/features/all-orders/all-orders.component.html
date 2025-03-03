@@ -1,0 +1,91 @@
+<div class="admin-orders-container">
+    <div class="header">
+      <h1>Orders Management</h1>
+      <div class="filter-controls">
+        <button class="btn" [class.btn-active]="statusFilter === 'ALL'" (click)="filterByStatus('ALL')">
+          All Orders
+        </button>
+        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.PENDING" (click)="filterByStatus(OrderStatus.PENDING)">
+          Pending
+        </button>
+        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.CONFIRMED" (click)="filterByStatus(OrderStatus.CONFIRMED)">
+          Confirmed
+        </button>
+        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.IN_PROGRESS" (click)="filterByStatus(OrderStatus.IN_PROGRESS)">
+          In Progress
+        </button>
+        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.COMPLETED" (click)="filterByStatus(OrderStatus.COMPLETED)">
+          Completed
+        </button>
+        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.CANCELLED" (click)="filterByStatus(OrderStatus.CANCELLED)">
+          Cancelled
+        </button>
+      </div>
+    </div>
+  
+    <div class="orders-list">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of filteredOrders" 
+                [class.new-order]="isNewOrder(order.orderId)"
+                (click)="clearNewFlag(order.orderId)">
+              <td>
+                {{order.orderNumber}} 
+                <span *ngIf="isNewOrder(order.orderId)" class="new-badge">NEW</span>
+              </td>
+              <td>{{order.customerName}}</td>
+              <td>
+                <div *ngFor="let item of order.orderItems" class="order-item">
+                  {{item.quantity}} x {{item.menuItemName}}
+                </div>
+              </td>
+              <td>${{order.totalAmount | number:'1.2-2'}}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getOrderStatusClass(order.status)">
+                  {{order.status}}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button *ngIf="order.status === OrderStatus.PENDING" 
+                          class="btn btn-sm btn-primary"
+                          (click)="updateOrderStatus(order, OrderStatus.CONFIRMED)">
+                    Confirm
+                  </button>
+                  <button *ngIf="order.status === OrderStatus.CONFIRMED" 
+                          class="btn btn-sm btn-info"
+                          (click)="updateOrderStatus(order, OrderStatus.IN_PROGRESS)">
+                    Start
+                  </button>
+                  <button *ngIf="order.status === OrderStatus.IN_PROGRESS" 
+                          class="btn btn-sm btn-success"
+                          (click)="updateOrderStatus(order, OrderStatus.COMPLETED)">
+                    Complete
+                  </button>
+                  <button *ngIf="order.status !== OrderStatus.CANCELLED && order.status !== OrderStatus.COMPLETED" 
+                          class="btn btn-sm btn-danger"
+                          (click)="updateOrderStatus(order, OrderStatus.CANCELLED)">
+                    Cancel
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredOrders.length === 0">
+              <td colspan="6" class="text-center">No orders found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

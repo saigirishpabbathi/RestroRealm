@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,5 +36,6 @@ public class TableEntity extends BaseEntity {
     private String metadata;
 
     @OneToMany(mappedBy = "table")
+    @JsonBackReference
     private List<ReservationEntity> reservations;
 }

@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.letusbuild.restrorealm.entity.Enum.ReservationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +26,7 @@ public class ReservationEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_id", nullable = false)
+    @JsonManagedReference
     private TableEntity table;
 
     @Column(nullable = false)

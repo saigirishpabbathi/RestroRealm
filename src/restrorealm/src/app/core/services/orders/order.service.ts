@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
 import { OrderStatus } from '../../../shared/enum/order-status.enum';
+import { Order } from '../../../shared/models/order.model';
+import { WebSocketService } from '../web-socket-service/web-socket.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +14,74 @@ import { OrderStatus } from '../../../shared/enum/order-status.enum';
 export class OrderService {
   private currentOrderId: string | null = null;
   apiUrl = environment.apiUrl;
+  private ordersSubject = new BehaviorSubject<Order[]>([]);
+  public orders$ = this.ordersSubject.asObservable();
+  private newOrdersSubject = new BehaviorSubject<Set<number>>(new Set<number>());
+  public newOrders$ = this.newOrdersSubject.asObservable();
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private webSocketService: WebSocketService,
+    private notificationService: NotificationService
+  ) {
+    this.initializeOrderUpdates();
+  }
+  
+  private initializeOrderUpdates() {
+    this.webSocketService.subscribe<Order>('/topic/orders', (order) => {
+      this.handleOrderUpdate(order);
+    });
+  }
+
+  private handleOrderUpdate(updatedOrder: Order) {
+    const currentOrders = this.ordersSubject.value;
+    const existingOrderIndex = currentOrders.findIndex(order => order.orderId === updatedOrder.orderId);
+    
+    if (existingOrderIndex >= 0) {
+      const updatedOrders = [...currentOrders];
+      updatedOrders[existingOrderIndex] = updatedOrder;
+      this.ordersSubject.next(updatedOrders);
+    } else {
+      const updatedOrders = [updatedOrder, ...currentOrders];
+      this.ordersSubject.next(updatedOrders);
+      
+      const newOrders = new Set(this.newOrdersSubject.value);
+      newOrders.add(updatedOrder.orderId);
+      this.newOrdersSubject.next(newOrders);
+      this.notificationService.playNewOrderNotification();
+      
+      setTimeout(() => {
+        const currentNewOrders = new Set(this.newOrdersSubject.value);
+        currentNewOrders.delete(updatedOrder.orderId);
+        this.newOrdersSubject.next(currentNewOrders);
+      }, 5 * 60 * 1000);
+    }
+  }
+  
+  clearNewOrderFlag(orderId: number) {
+    const newOrders = this.newOrdersSubject.value;
+    newOrders.delete(orderId);
+    this.newOrdersSubject.next(newOrders);
+  }
+  
+  updateOrderStatus(orderId: number, status: OrderStatus) {
+    return this.http.put<Order>(
+      `${this.apiUrl}/orders/${orderId}/status`, 
+      null, 
+      {
+        headers: this.getHeaders(),
+        params: { status: status.toString() }
+      }
+    );
+  }
+  
+  getAllOrders() {
+    return this.http.get<Order[]>(`${this.apiUrl}/orders`, {headers: this.getHeaders()})
+      .pipe(tap(orders => {
+        this.ordersSubject.next(orders);
+      }));
+  }
   
   private getHeaders() {
     return new HttpHeaders({
