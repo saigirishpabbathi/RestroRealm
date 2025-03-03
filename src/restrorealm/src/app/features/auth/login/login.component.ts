@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ToasterComponent } from '../../../shared/components/toaster/toaster.component';
@@ -19,7 +19,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http'; // Import H
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   toast: {
@@ -36,6 +36,15 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+  }
+  ngOnInit(): void {
+    if (this.authService.getRefreshToken()) {
+      this.toast = { message: 'Already LoggedIn! Redirecting to Dashboard!', type: 'success' };
+      setTimeout(() => {
+        this.toast = null;
+        this.router.navigate(['/dashboard']);
+      }, 3000);
+    }
   }
 
   get email() {

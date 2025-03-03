@@ -9,4 +9,6 @@ public interface MenuItemService {
     List<MenuItemDto> getAllMenuItems();
     MenuItemDto createMenuItem(MenuItemDto menuItemDto);
     MenuItemDto updateMenuItem(Long menuItemId, MenuItemDto menuItemDto);
+
+    List<MenuItemDto> getMenuItemsByCategoryName(String categoryName);
 }

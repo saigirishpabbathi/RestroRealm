@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,12 +23,16 @@ public class ReservationResponseDto {
 
     private String customerContact;
 
+    private String email;
+
+    private Integer numGuests;
+
     private LocalDate reservationDate;
 
     private LocalTime reservationTime;
 
     private Integer duration;
 
-    private String status; // ACTIVE or CANCELED
+    private String status;
 }
 

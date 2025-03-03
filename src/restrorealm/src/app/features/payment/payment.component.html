@@ -1,0 +1,54 @@
+<div class="payment-container">
+  <h2>Payment Details</h2>
+  
+  <!-- Cash at Counter -->
+  <div *ngIf="paymentMethod === 'cash'">
+    <div class="cash-payment">
+      <p>Pay with cash at the counter upon delivery</p>
+      <button (click)="confirmCashPayment()" [disabled]="isProcessing">
+        {{ isProcessing ? 'Processing...' : 'Confirm Order ($' + (price | number:'1.2-2') + ')' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Credit/Debit Card -->
+  <div *ngIf="paymentMethod === 'credit' || paymentMethod === 'debit'">
+    <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+      <div class="form-group">
+        <label>Cardholder Name</label>
+        <input type="text" formControlName="cardholderName">
+        <div class="error" *ngIf="f['cardholderName'].touched && f['cardholderName'].errors">
+          * Required field
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Card Details</label>
+        <div *ngIf="!stripeElementLoaded" class="loading-element">
+          Loading payment form...
+        </div>
+        <!-- Use ViewChild reference instead of ID -->
+        <div #cardElement class="card-element"></div>
+        <div id="card-errors" class="error" role="alert">{{ errorMessage }}</div>
+      </div>
+
+      <button type="submit" [disabled]="isProcessing || !stripeElementLoaded">
+        {{ isProcessing ? 'Processing...' : 'Pay $' + (price | number:'1.2-2') }}
+      </button>
+    </form>
+  </div>
+
+  <!-- PayPal -->
+  <div *ngIf="paymentMethod === 'paypal'">
+    <div *ngIf="!paypalLoaded" class="loading-element">
+      Loading PayPal...
+    </div>
+    <div id="paypal-button-container"></div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
+
+  <!-- General Error Display -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</div>

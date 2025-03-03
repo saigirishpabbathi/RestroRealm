@@ -1,7 +1,9 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.letusbuild.restrorealm.entity.Enum.ReservationStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,8 +24,9 @@ public class ReservationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Many reservations can belong to one table
-    @JoinColumn(name = "table_id", nullable = false) // Foreign key to TableEntity
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_id", nullable = false)
+    @JsonManagedReference
     private TableEntity table;
 
     @Column(nullable = false)
@@ -33,16 +36,22 @@ public class ReservationEntity {
     private String customerContact;
 
     @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private Integer numGuests;
+
+    @Column(nullable = false)
     private LocalDate reservationDate;
 
     @Column(nullable = false)
     private LocalTime reservationTime;
 
     @Column(nullable = false)
-    private Integer duration; // Duration in hours
+    private Integer duration;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ReservationStatus status; // ACTIVE, CANCELED
+    private ReservationStatus status;
 }
 

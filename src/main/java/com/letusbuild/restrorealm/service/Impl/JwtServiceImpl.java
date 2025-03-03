@@ -56,12 +56,19 @@ public class JwtServiceImpl {
     }
 
     public Long getUserIdFromToken(String token){
-        Claims claim = Jwts.parser()
-                .verifyWith(getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return Long.valueOf(claim.getSubject());
+        try {
+            if (token == null || token.trim().isEmpty()) {
+                throw new IllegalArgumentException("Token is null or empty");
+            }
+            Claims claim = Jwts.parser()
+                    .verifyWith(getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return Long.valueOf(claim.getSubject());
+        } catch(Exception e) {
+            return  null;
+        }
     }
 
     private List<String> getPermissionNames(Set<Permission> permissions){

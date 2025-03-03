@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { User } from '../../../shared/models/user.model';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { SidebarService } from '../../services/sidebar/sidebar.service';
+import { CartService } from '../../services/cart/cart.service';
 
 
 @Component({
@@ -18,18 +19,21 @@ import { SidebarService } from '../../services/sidebar/sidebar.service';
 @Injectable({
   providedIn: 'root',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   isSidebarOpen = true;
   showProfileDropdown = false;
   user: User | null = null;
+  cartCount = 0;
+  private cartSubscription?: Subscription;
   private authSubscription?: Subscription;
   private sidebarSubscription?: Subscription;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+    private cartService : CartService
   ) {}
 
   toggleSidebar() {
@@ -46,27 +50,31 @@ export class NavbarComponent implements OnInit {
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+    this.showProfileDropdown = false;
   }
 
   viewProfile() {
     this.router.navigate(['/profile']).then(() => {
-      console.log('Navigated to profile page');
+      this.showProfileDropdown = false;
     });
   }
 
   navigateToLogin() {
     this.router.navigate(['/login']).then(() => {
-      console.log('Navigated to login page');
+      this.showProfileDropdown = false;
     });
   }
 
   navigateToRegister() {
     this.router.navigate(['/register']).then(() => {
-      console.log('Navigated to register page');
+      this.showProfileDropdown = false;
     });
   }
 
   ngOnInit(): void {
+    this.cartSubscription = this.cartService.cartItems$.subscribe(items => {
+      this.cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    });
     this.authSubscription = this.authService.isLoggedIn$.subscribe({
       next: (isLoggedIn) => {
         this.isLoggedIn = isLoggedIn;
@@ -90,6 +98,8 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.isSidebarOpen = false;
+    this.showProfileDropdown = false;
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }

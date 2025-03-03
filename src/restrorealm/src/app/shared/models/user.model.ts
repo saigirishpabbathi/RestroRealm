@@ -8,6 +8,8 @@ export interface User {
 
     email: string;
 
+    dateOfBirth: any;
+
     password?: string;
 
     role?: string;
@@ -15,4 +17,14 @@ export interface User {
     profilePicture?: string;
 
     permissionDtoSet?: Permission[];
+
+    street1?: string;
+
+    street2?: string;
+
+    city?: string;
+
+    state?: string;
+
+    postalCode?: number;
 }

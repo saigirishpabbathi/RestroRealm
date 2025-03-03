@@ -6,6 +6,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { ToasterComponent } from '../../shared/components/toaster/toaster.component';
 import { RoleService } from '../../core/services/role/role.service';
+import { PermissionService } from '../../core/services/permissions/permission.service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-roles',
@@ -31,6 +33,8 @@ export class RoleComponent {
     roleForm: FormGroup;
     showDialog = false;
     loading = false;
+    permissions: any;
+    rolePermissions: any
 
     ngOnInit(): void {
         this.editRole = this.hasPermission('UPDATE_SINGLE_ROLE');
@@ -38,18 +42,20 @@ export class RoleComponent {
         this.deleteSingleRole = this.hasPermission('DELETE_SINGLE_ROLE');
         this.readSingleRole = this.hasPermission('READ_SINGLE_ROLE');
         this.loadRoles();
-
+        this.loadPermissions();
     }
 
     constructor(
         private fb: FormBuilder, 
         private authService: AuthService, 
-        private roleService: RoleService
+        private roleService: RoleService,
+        private permissionService: PermissionService
     ) {
         const time = new Date();
         this.roleForm = this.fb.group({
             name: ['', Validators.required],
-            description: ['']
+            description: [''],
+            permissions: []
         });
     }
 
@@ -61,6 +67,33 @@ export class RoleComponent {
             },
             error: (error) => this.showToast(error.message, 'error')
         });
+    }
+
+    loadPermissions(){
+        this.permissionService.getPermissions().subscribe({
+            next: (permissions) => {
+                this.permissions = permissions;
+            },
+            error: (error) => this.showToast(error.message, 'error')
+        });
+    }
+
+    onPermissionChange(permission: any, event: Event) {
+        const isChecked = (event.target as HTMLInputElement).checked;
+        let updatedPermissions = [...(this.roleForm.value.permissions || [])];
+        if (isChecked) {
+            if (!updatedPermissions.some((p: any) => p.id === permission.id)) {
+                updatedPermissions.push(permission);
+            }
+        } else {
+            updatedPermissions = updatedPermissions.filter((p: any) => p.id !== permission.id);
+        }
+        this.roleForm.patchValue({ permissions: updatedPermissions });
+    }
+    
+    isPermissionChecked(permission: any): boolean {
+        const selectedPermissions = this.roleForm.value.permissions || [];
+        return selectedPermissions.some((p: any) => p.id === permission.id);
     }
 
     private showToast(message: string, type: 'success' | 'error') {
@@ -101,9 +134,16 @@ export class RoleComponent {
 
     openEditDialog(role: any) {
         this.editingRole = role;
+        const rolePermissions = role.permissions ? role.permissions.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            permissionCode: p.permissionCode,
+            description: p.description
+        })) : [];
         this.roleForm.patchValue({
             name: role.name,
-            description: role.description
+            description: role.description,
+            permissions: rolePermissions
         });
         this.showDialog = true;
     }

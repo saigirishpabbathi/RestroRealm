@@ -35,6 +35,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
+    @GetMapping("/public/all/")
+    public ResponseEntity<List<CategoryDto>> getAllCategoriesPublic(){
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
     @PostMapping("/")
     @PreAuthorize("hasAuthority('CREATE_CATEGORY')")
     public ResponseEntity<CategoryDto> createCategory(
@@ -63,6 +68,7 @@ public class CategoryController {
                                                       @RequestPart(value = "image", required = false) MultipartFile imageFile){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             CategoryDto categoryDto = objectMapper.readValue(category, CategoryDto.class);
             if (imageFile != null && !imageFile.isEmpty()) {
                 CategoryDto existingCategory = categoryService.getCategoryById(categoryId);

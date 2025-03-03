@@ -14,6 +14,7 @@ import com.letusbuild.restrorealm.repository.TableRepository;
 import com.letusbuild.restrorealm.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +31,20 @@ public class OrderServiceImpl implements OrderService {
     private final TableRepository tableRepository;
     private final MenuItemRepository menuItemRepository;
     private final ModelMapper modelMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
-        // Fetch Table
-        TableEntity table = tableRepository.findById(orderRequestDto.getTableId())
-                .orElseThrow(() -> new IllegalArgumentException("Table not found"));
-
-        // Map Order
         Order order = new Order();
-        order.setTable(table);
+        if(orderRequestDto.getTableId() != null) {
+            TableEntity table = tableRepository.findById(orderRequestDto.getTableId())
+                    .orElseThrow(() -> new IllegalArgumentException("Table not found"));
+            order.setTable(table);
+        } else {
+            TableEntity table = tableRepository.findById(0L)
+                    .orElseThrow(() -> new IllegalArgumentException("Table not found"));
+            order.setTable(table);
+        }
         order.setCustomerName(orderRequestDto.getCustomerName());
         order.setOrderItems(orderRequestDto.getOrderItems().stream()
                 .map(orderItemDto -> {
@@ -53,16 +58,21 @@ public class OrderServiceImpl implements OrderService {
                     return orderItem;
                 }).collect(Collectors.toList()));
 
-        // Calculate Total Amount
         double totalAmount = order.getOrderItems().stream()
                 .mapToDouble(item -> item.getPrice()*item.getQuantity())
                 .sum();
+        order.setOrderNumber(orderRequestDto.getOrderNumber());
+        order.setStatus(orderRequestDto.getStatus());
         order.setTotalAmount(totalAmount);
-
-        // Save Order
+        order.setStreet1(orderRequestDto.getStreet1());
+        order.setStreet2(orderRequestDto.getStreet2());
+        order.setCity(orderRequestDto.getCity());
+        order.setState(orderRequestDto.getState());
+        order.setPostalCode(orderRequestDto.getPostalCode());
         Order savedOrder = orderRepository.save(order);
-
-        return modelMapper.map(savedOrder, OrderResponseDto.class);
+        OrderResponseDto responseDto = modelMapper.map(savedOrder, OrderResponseDto.class);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
+        return responseDto;
     }
 
     @Override
@@ -85,8 +95,14 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        System.out.println();
         orderRepository.save(order);
-        return modelMapper.map(order, OrderResponseDto.class);
+        OrderResponseDto responseDto = modelMapper.map(order, OrderResponseDto.class);
+
+        messagingTemplate.convertAndSend("/topic/orders/" + orderId, responseDto);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
+
+        return responseDto;
     }
 
     @Override
@@ -94,7 +110,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
+        Order cancelledOrder = orderRepository.save(order);
+        OrderResponseDto responseDto = modelMapper.map(order, OrderResponseDto.class);
+        messagingTemplate.convertAndSend("/topic/orders/" + orderId, responseDto);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
     }
 }
 

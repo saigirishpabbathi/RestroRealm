@@ -1,0 +1,48 @@
+<div class="checkout-container">
+    <h2>Checkout</h2>
+    
+    <form (ngSubmit)="submitOrder()">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="shippingInfo.customerName" name="name" required>
+      </div>
+  
+      <div class="form-group">
+        <label>Street 1</label>
+        <input type="text" [(ngModel)]="shippingInfo.street1" name="street1" required>
+      </div>
+  
+      <div class="form-group">
+        <label>Street 2</label>
+        <input type="text" [(ngModel)]="shippingInfo.street2" name="street2">
+      </div>
+  
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" [(ngModel)]="shippingInfo.city" name="city" required>
+      </div>
+  
+      <div class="form-group">
+        <label>State</label>
+        <input type="text" [(ngModel)]="shippingInfo.state" name="state" required>
+      </div>
+  
+      <div class="form-group">
+        <label>Postal Code</label>
+        <input type="number" [(ngModel)]="shippingInfo.postalCode" name="postalCode" required>
+      </div>
+  
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select [(ngModel)]="shippingInfo.paymentMethod" name="paymentMethod" required>
+          <option value="credit">Credit Card</option>
+          <option value="debit">Debit Card</option>
+          <option value="paypal">PayPal</option>
+          <option value="cash">Cash at Counter</option>
+        </select>
+      </div>
+  
+      <button type="submit" class="submit-order">Place Order</button>
+    </form>
+  </div>
+  

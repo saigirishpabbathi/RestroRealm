@@ -26,6 +26,13 @@ public class ReservationRequestDto {
     @NotBlank(message = "Customer contact is required")
     private String customerContact;
 
+    @NotBlank(message = "Customer Email is required")
+    private String email;
+
+    @NotNull(message = "Number of Guests is required")
+    @Min(value = 1, message = "Number of Guests must be at least 1 hour")
+    private Integer numGuests;
+
     @NotNull(message = "Reservation date is required")
     private LocalDate reservationDate;
 

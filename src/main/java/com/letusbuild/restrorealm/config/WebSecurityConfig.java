@@ -1,5 +1,8 @@
 package com.letusbuild.restrorealm.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.letusbuild.restrorealm.config.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,9 +33,11 @@ public class WebSecurityConfig {
     private static final String[] publicRoutes = {
             "/api/v1/auth/**",
             "/api/v1/configs/**",
+            "/api/v1/category/public/**",
+            "/api/v1/menu-item/public/**",
             "/images/**",
-            "/images/menu/**"
-
+            "/images/menu/**",
+            "/ws/**"
     };
 
     @Bean
@@ -46,10 +51,10 @@ public class WebSecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(List.of("http://localhost:4200")); // Frontend origin
-                            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // HTTP methods
-                            config.setAllowedHeaders(List.of("*")); // Allow all headers
-                            config.setAllowCredentials(true); // Allow cookies or Authorization headers
+                            config.setAllowedOrigins(List.of("http://localhost:4200"));
+                            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                            config.setAllowedHeaders(List.of("*"));
+                            config.setAllowCredentials(true);
                             return config;
                         })
                 );

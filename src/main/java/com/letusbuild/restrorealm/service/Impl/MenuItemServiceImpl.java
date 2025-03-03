@@ -63,4 +63,12 @@ public class MenuItemServiceImpl implements MenuItemService {
         MenuItem updatedMenuItem = menuItemRepository.save(existingMenuItem);
         return modelMapper.map(updatedMenuItem, MenuItemDto.class);
     }
+
+    @Override
+    public List<MenuItemDto> getMenuItemsByCategoryName(String categoryName) {
+        return menuItemRepository.findByCategoryName(categoryName)
+                .stream()
+                .map(menuItem -> (modelMapper.map(menuItem,MenuItemDto.class)))
+                .collect(Collectors.toList());
+    }
 }

@@ -1,10 +1,13 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -32,6 +35,7 @@ public class TableEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String metadata;
 
-//    @OneToMany(mappedBy = "table")
-//    private List<ReservationEntity> reservations; // One table can have many reservations
+    @OneToMany(mappedBy = "table")
+    @JsonBackReference
+    private List<ReservationEntity> reservations;
 }

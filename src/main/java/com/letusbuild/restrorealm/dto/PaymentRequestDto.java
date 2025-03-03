@@ -6,7 +6,7 @@ import lombok.Data;
 public class PaymentRequestDto {
     private Long orderId;
     private Double amount;
-    private String currency; // e.g., USD, INR
-    private String paymentMethodId; // Card, UPI, etc.
+    private String currency;
+    private String paymentMethodId;
 }
 
