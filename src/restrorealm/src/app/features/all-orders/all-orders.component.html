@@ -1,91 +1,318 @@
 <div class="admin-orders-container">
+    <!-- Header with title and main controls -->
     <div class="header">
       <h1>Orders Management</h1>
-      <div class="filter-controls">
-        <button class="btn" [class.btn-active]="statusFilter === 'ALL'" (click)="filterByStatus('ALL')">
-          All Orders
-        </button>
-        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.PENDING" (click)="filterByStatus(OrderStatus.PENDING)">
-          Pending
-        </button>
-        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.CONFIRMED" (click)="filterByStatus(OrderStatus.CONFIRMED)">
-          Confirmed
-        </button>
-        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.IN_PROGRESS" (click)="filterByStatus(OrderStatus.IN_PROGRESS)">
-          In Progress
-        </button>
-        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.COMPLETED" (click)="filterByStatus(OrderStatus.COMPLETED)">
-          Completed
-        </button>
-        <button class="btn" [class.btn-active]="statusFilter === OrderStatus.CANCELLED" (click)="filterByStatus(OrderStatus.CANCELLED)">
-          Cancelled
-        </button>
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search by order #, customer, or items" 
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="applySearch()">
+        <button class="btn search-btn" (click)="applySearch()">Search</button>
       </div>
     </div>
   
+    <!-- Filter and bulk action controls -->
+    <div class="controls-section">
+      <div class="filter-section">
+        <h3>Filters</h3>
+  
+        <!-- Status filter -->
+        <div class="filter-group">
+          <label>Status:</label>
+          <div class="dropdown-container">
+            <button class="btn filter-btn" (click)="toggleStatusFilterDropdown($event)">
+              {{ statusFilters.size > 0 ? statusFilters.size + ' selected' : 'Select status' }}
+              <span class="dropdown-icon">▼</span>
+            </button>
+            <div class="dropdown-menu" [class.show]="showStatusFilterDropdown">
+              <div class="dropdown-item checkbox-item" *ngFor="let status of OrderStatus | keyvalue">
+                <label>
+                  <input type="checkbox" 
+                         [checked]="isStatusFilterActive(status.value)" 
+                         (change)="toggleStatusFilter(status.value)">
+                  <span [class]="'status-badge ' + getOrderStatusClass(status.value)">
+                    {{ status.value }}
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Date range filter -->
+        <div class="filter-group">
+          <label>Order Date:</label>
+          <div class="date-range">
+            <input type="date" [(ngModel)]="dateRange.start" class="datepicker">
+            <span>to</span>
+            <input type="date" [(ngModel)]="dateRange.end" class="datepicker">
+            <button class="btn filter-apply-btn" (click)="applyDateFilter()">Apply</button>
+          </div>
+        </div>
+  
+        <!-- Clear filters button -->
+        <button class="btn clear-btn" (click)="clearFilters()">Clear Filters</button>
+      </div>
+  
+      <!-- Bulk actions -->
+      <div class="bulk-actions" *ngIf="selectedOrders.size > 0">
+        <span class="selected-count">{{ selectedOrders.size }} orders selected</span>
+        <div class="bulk-buttons">
+          <button class="btn btn-info" (click)="updateSelectedOrdersStatus(OrderStatus.CONFIRMED)">Confirm Selected</button>
+          <button class="btn btn-primary" (click)="updateSelectedOrdersStatus(OrderStatus.PREPARING)">Start Selected</button>
+          <button class="btn btn-success" (click)="updateSelectedOrdersStatus(OrderStatus.READY_FOR_PICKUP)">Mark Ready Selected</button>
+          <button class="btn btn-success" (click)="updateSelectedOrdersStatus(OrderStatus.COMPLETED)">Complete Selected</button>
+          <button class="btn btn-danger" (click)="updateSelectedOrdersStatus(OrderStatus.CANCELLED)">Cancel Selected</button>
+          <button class="btn" (click)="clearAllSelections()">Clear Selection</button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Orders list table -->
     <div class="orders-list">
       <div class="table-responsive">
         <table class="table">
           <thead>
             <tr>
-              <th>Order #</th>
+              <th class="checkbox-cell">
+                <input type="checkbox" 
+                       [checked]="areAllDisplayedOrdersSelected()" 
+                       (change)="selectAllDisplayedOrders()">
+              </th>
+              <th class="sortable" (click)="setSorting('orderNumber')">
+                Order # {{ getSortIndicator('orderNumber') }}
+              </th>
               <th>Customer</th>
               <th>Items</th>
-              <th>Total</th>
+              <th class="sortable" (click)="setSorting('totalAmount')">
+                Total {{ getSortIndicator('totalAmount') }}
+              </th>
               <th>Status</th>
+              <th class="sortable" (click)="setSorting('orderDate')">
+                Date {{ getSortIndicator('orderDate') }}
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let order of filteredOrders" 
+            <tr *ngFor="let order of displayedOrders" 
                 [class.new-order]="isNewOrder(order.orderId)"
+                [class.selected-row]="isOrderSelected(order.orderId)"
+                (click)="viewOrderDetails(order)"
                 (click)="clearNewFlag(order.orderId)">
+              <td class="checkbox-cell" (click)="toggleOrderSelection(order.orderId, $event)">
+                <input type="checkbox" [checked]="isOrderSelected(order.orderId)">
+              </td>
               <td>
-                {{order.orderNumber}} 
+                {{ order.orderNumber }}
                 <span *ngIf="isNewOrder(order.orderId)" class="new-badge">NEW</span>
               </td>
-              <td>{{order.customerName}}</td>
+              <td>{{ order.customerName }}</td>
               <td>
-                <div *ngFor="let item of order.orderItems" class="order-item">
-                  {{item.quantity}} x {{item.menuItemName}}
+                <div class="order-items-preview">
+                  <span *ngIf="order.orderItems.length > 0">
+                    {{ order.orderItems[0].quantity }} x {{ order.orderItems[0].menuItemName }}
+                  </span>
+                  <span *ngIf="order.orderItems.length > 1" class="more-items">
+                    +{{ order.orderItems.length - 1 }} more
+                  </span>
                 </div>
               </td>
-              <td>${{order.totalAmount | number:'1.2-2'}}</td>
+              <td>${{ order.totalAmount | number:'1.2-2' }}</td>
               <td>
                 <span class="status-badge" [ngClass]="getOrderStatusClass(order.status)">
-                  {{order.status}}
+                  {{ order.status }}
                 </span>
               </td>
+              <td>{{ order.createdAt | date:'short' }}</td>
               <td>
                 <div class="action-buttons">
-                  <button *ngIf="order.status === OrderStatus.PENDING" 
+                  <button *ngIf="order.status === OrderStatus.PAYMENT_SUCCESSFUL" 
                           class="btn btn-sm btn-primary"
-                          (click)="updateOrderStatus(order, OrderStatus.CONFIRMED)">
+                          (click)="updateOrderStatus(order, OrderStatus.CONFIRMED, $event)">
                     Confirm
                   </button>
                   <button *ngIf="order.status === OrderStatus.CONFIRMED" 
                           class="btn btn-sm btn-info"
-                          (click)="updateOrderStatus(order, OrderStatus.IN_PROGRESS)">
+                          (click)="updateOrderStatus(order, OrderStatus.PREPARING, $event)">
                     Start
                   </button>
-                  <button *ngIf="order.status === OrderStatus.IN_PROGRESS" 
+                  <button *ngIf="order.status === OrderStatus.PREPARING" 
+                          class="btn btn-sm btn-info"
+                          (click)="updateOrderStatus(order, OrderStatus.READY_FOR_PICKUP, $event)">
+                    Ready
+                  </button>
+                  <button *ngIf="order.status === OrderStatus.READY_FOR_PICKUP" 
                           class="btn btn-sm btn-success"
-                          (click)="updateOrderStatus(order, OrderStatus.COMPLETED)">
+                          (click)="updateOrderStatus(order, OrderStatus.COMPLETED, $event)">
                     Complete
                   </button>
                   <button *ngIf="order.status !== OrderStatus.CANCELLED && order.status !== OrderStatus.COMPLETED" 
                           class="btn btn-sm btn-danger"
-                          (click)="updateOrderStatus(order, OrderStatus.CANCELLED)">
+                          (click)="updateOrderStatus(order, OrderStatus.CANCELLED, $event)">
                     Cancel
+                  </button>
+                  <button class="btn btn-sm btn-view"
+                          (click)="viewOrderDetails(order, $event)">
+                    View
                   </button>
                 </div>
               </td>
             </tr>
-            <tr *ngIf="filteredOrders.length === 0">
-              <td colspan="6" class="text-center">No orders found</td>
+            <tr *ngIf="displayedOrders.length === 0">
+              <td colspan="8" class="text-center">No orders found</td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  
+    <!-- Pagination controls -->
+    <div class="pagination-controls">
+      <div class="items-per-page">
+        <span>Show</span>
+        <select [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()">
+          <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+        </select>
+        <span>items per page</span>
+      </div>
+      
+      <div class="pagination">
+        <button class="pagination-btn" 
+                [disabled]="currentPage === 1"
+                (click)="goToPage(currentPage - 1)">
+          &laquo;
+        </button>
+        
+        <ng-container *ngFor="let page of getPaginationArray()">
+          <span *ngIf="page < 0" class="ellipsis">...</span>
+          <button *ngIf="page > 0" 
+                  class="pagination-btn" 
+                  [class.active]="currentPage === page"
+                  (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        </ng-container>
+        
+        <button class="pagination-btn" 
+                [disabled]="currentPage === totalPages || totalPages === 0"
+                (click)="goToPage(currentPage + 1)">
+          &raquo;
+        </button>
+      </div>
+      
+      <div class="page-info">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+        {{ getMinValue(currentPage * itemsPerPage, filteredOrders.length) }} of 
+        {{ filteredOrders.length }} orders
+      </div>
+    </div>
+  
+    <!-- Order details modal -->
+    <div class="modal" [class.show]="orderDetails !== null">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Order #{{ orderDetails?.orderNumber }}</h2>
+          <button class="close-btn" (click)="closeOrderDetails()">&times;</button>
+        </div>
+        <div class="modal-body" *ngIf="orderDetails">
+          <div class="order-info-grid">
+            <div class="order-info-section">
+              <h3>Customer Information</h3>
+              <p><strong>Name:</strong> {{ orderDetails.customerName }}</p>
+              <p><strong>Phone:</strong> {{ orderDetails.customerPhone }}</p>
+              <p><strong>Email:</strong> {{ orderDetails.customerEmail }}</p>
+            </div>
+            
+            <div class="order-info-section">
+              <h3>Order Information</h3>
+              <p><strong>Order Date:</strong> {{ orderDetails.createdAt | date:'medium' }}</p>
+              <p><strong>Status:</strong> 
+                <span class="status-badge" [ngClass]="getOrderStatusClass(orderDetails.status)">
+                  {{ orderDetails.status }}
+                </span>
+              </p>
+              <p><strong>Payment Method:</strong> {{ orderDetails.paymentMethod }}</p>
+            </div>
+          </div>
+          
+          <div class="order-items-section">
+            <h3>Order Items</h3>
+            <table class="order-items-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of orderDetails.orderItems">
+                  <td>
+                    {{ item.menuItemName }}
+                    <div class="item-notes" *ngIf="item.notes">Note: {{ item.notes }}</div>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>${{ item.price | number:'1.2-2' }}</td>
+                  <td>${{ item.quantity * item.price | number:'1.2-2' }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="text-right"><strong>Subtotal</strong></td>
+                  <td>${{ orderDetails.subtotal | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="orderDetails.taxAmount">
+                  <td colspan="3" class="text-right"><strong>Tax</strong></td>
+                  <td>${{ orderDetails.taxAmount | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="orderDetails.deliveryFee">
+                  <td colspan="3" class="text-right"><strong>Delivery Fee</strong></td>
+                  <td>${{ orderDetails.deliveryFee | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="orderDetails.discount">
+                  <td colspan="3" class="text-right"><strong>Discount</strong></td>
+                  <td>-${{ orderDetails.discount | number:'1.2-2' }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-right"><strong>Total</strong></td>
+                  <td>${{ orderDetails.totalAmount | number:'1.2-2' }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          
+          <div class="order-actions">
+            <button *ngIf="orderDetails.status === OrderStatus.PAYMENT_SUCCESSFUL" 
+                    class="btn btn-primary"
+                    (click)="updateOrderStatus(orderDetails, OrderStatus.CONFIRMED)">
+              Confirm Order
+            </button>
+            <button *ngIf="orderDetails.status === OrderStatus.CONFIRMED" 
+                    class="btn btn-info"
+                    (click)="updateOrderStatus(orderDetails, OrderStatus.PREPARING)">
+              Start Preparing
+            </button>
+            <button *ngIf="orderDetails.status === OrderStatus.PREPARING" 
+                    class="btn btn-info"
+                    (click)="updateOrderStatus(orderDetails, OrderStatus.READY_FOR_PICKUP)">
+              Mark Ready for Pickup
+            </button>
+            <button *ngIf="orderDetails.status === OrderStatus.READY_FOR_PICKUP" 
+                    class="btn btn-success"
+                    (click)="updateOrderStatus(orderDetails, OrderStatus.COMPLETED)">
+              Complete Order
+            </button>
+            <button *ngIf="orderDetails.status !== OrderStatus.CANCELLED && orderDetails.status !== OrderStatus.COMPLETED" 
+                    class="btn btn-danger"
+                    (click)="updateOrderStatus(orderDetails, OrderStatus.CANCELLED)">
+              Cancel Order
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

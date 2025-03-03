@@ -93,7 +93,7 @@ export class OrderService {
   createOrder(orderData: any) {
     return this.http.post<any>(`${this.apiUrl}/orders`, {
       ...orderData,
-      status: OrderStatus.PENDING
+      status: OrderStatus.PAYMENT_PENDING
     }, {headers: this.getHeaders()}).pipe(tap(order => this.currentOrderId = order.id));
   }
 
