@@ -61,7 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .setAmount((long) (requestDto.getAmount() * 100))
                         .setCurrency(requestDto.getCurrency())
                         .addPaymentMethodType("card")
-                        .addPaymentMethodType("paypal")
+                       
                         .setPaymentMethod(requestDto.getPaymentMethodId())
                         .setConfirm(true)
                         .build();
