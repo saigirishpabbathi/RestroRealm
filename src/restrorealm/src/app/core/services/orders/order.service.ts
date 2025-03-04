@@ -94,7 +94,7 @@ export class OrderService {
     return this.http.post<any>(`${this.apiUrl}/orders`, {
       ...orderData,
       status: OrderStatus.PAYMENT_PENDING
-    }, {headers: this.getHeaders()}).pipe(tap(order => this.currentOrderId = order.id));
+    }, {headers: this.getHeaders()}).pipe(tap(order => this.currentOrderId = order.orderId));
   }
 
   getPendingOrder() {
@@ -105,7 +105,7 @@ export class OrderService {
     return this.http.post(`${this.apiUrl}/payments/process`, paymentData, {headers: this.getHeaders()});
   }
 
-  getOrder(orderId: string) {
+  getOrder(orderId: any) {
     return this.http.get<any>(`${this.apiUrl}/orders/${orderId}`, {headers: this.getHeaders()});
   }
 }

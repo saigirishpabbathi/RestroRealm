@@ -17,5 +17,9 @@ export interface Order {
     taxAmount?: number;
     deliveryFee?: number;
     discount?: number;
-    // other properties as needed
+    street1: string;
+    street2: string;
+    city: string;
+    state: string;
+    postalCode: number;
   }

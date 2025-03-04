@@ -22,7 +22,7 @@ export class OrderGuard implements CanActivate {
     }
     return this.orderService.getOrder(orderId).pipe(
       map(order => {
-        if (order.status !== OrderStatus.PENDING) {
+        if (order.status !== OrderStatus.PAYMENT_PENDING) {
           this.router.navigate(['/checkout']);
           return false;
         }
