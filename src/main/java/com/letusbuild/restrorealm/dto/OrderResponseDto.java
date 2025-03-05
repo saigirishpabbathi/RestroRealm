@@ -24,7 +24,7 @@ public class OrderResponseDto {
     private String postalCode;
     private Double totalAmount;
     private OrderStatus status;
-    private PaymentResponseDto payment;
+//    private PaymentResponseDto payment;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

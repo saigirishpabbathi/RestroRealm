@@ -14,6 +14,7 @@ import com.letusbuild.restrorealm.repository.TableRepository;
 import com.letusbuild.restrorealm.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final TableRepository tableRepository;
     private final MenuItemRepository menuItemRepository;
     private final ModelMapper modelMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
@@ -68,7 +70,9 @@ public class OrderServiceImpl implements OrderService {
         order.setState(orderRequestDto.getState());
         order.setPostalCode(orderRequestDto.getPostalCode());
         Order savedOrder = orderRepository.save(order);
-        return modelMapper.map(savedOrder, OrderResponseDto.class);
+        OrderResponseDto responseDto = modelMapper.map(savedOrder, OrderResponseDto.class);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
+        return responseDto;
     }
 
     @Override
@@ -91,8 +95,14 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        System.out.println();
         orderRepository.save(order);
-        return modelMapper.map(order, OrderResponseDto.class);
+        OrderResponseDto responseDto = modelMapper.map(order, OrderResponseDto.class);
+
+        messagingTemplate.convertAndSend("/topic/orders/" + orderId, responseDto);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
+
+        return responseDto;
     }
 
     @Override
@@ -100,7 +110,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
+        Order cancelledOrder = orderRepository.save(order);
+        OrderResponseDto responseDto = modelMapper.map(order, OrderResponseDto.class);
+        messagingTemplate.convertAndSend("/topic/orders/" + orderId, responseDto);
+        messagingTemplate.convertAndSend("/topic/orders", responseDto);
     }
 }
 

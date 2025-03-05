@@ -7,6 +7,7 @@ import { switchMap, catchError, take } from 'rxjs/operators';
 import { of, Subscription, lastValueFrom } from 'rxjs';
 import { OrderService } from '../../core/services/orders/order.service';
 import { environment } from '../../../environments/environment';
+import { OrderStatus } from '../../shared/enum/order-status.enum';
 interface PaymentResponse {
   status: string;
   amount: number;
@@ -31,7 +32,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   stripe: any;
   cardElement: any;
   paypalButton: any;
-  orderId!: string;
+  orderId!: number;
   orderDetails: any;
   paymentMethod: string | null = null;
   isProcessing = false;
@@ -76,7 +77,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!order) return;
       this.orderDetails = order;
       if (order.payment?.status === 'succeeded' || order.payment?.status === 'CASHIER_PENDING') {
-        this.router.navigate(['/order-confirmation', order.orderNumber]);
+        this.router.navigate(['/order-confirmation', order.orderId]);
         return;
       }
 
@@ -269,8 +270,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       ) as PaymentResponse;
   
       if (response.status === 'succeeded' || response.status === 'CASHIER_PENDING') {
+        if(response.status === 'CASHIER_PENDING'){
+          this.orderService.updateOrderStatus(this.orderId, OrderStatus.CASHIER_PENDING).subscribe();
+        } else {
+          this.orderService.updateOrderStatus(this.orderId, OrderStatus.PAYMENT_SUCCESSFUL).subscribe();
+        }
         this.cartService.clearCart();
-        this.router.navigate(['/order-confirmation', this.orderDetails.orderNumber]);
+        this.router.navigate(['/order-confirmation', this.orderDetails.orderId]);
       } else {
         throw new Error(response.error || 'Payment failed');
       }

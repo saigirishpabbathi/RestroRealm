@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDto getUserById(Long userId) {
         User user = getUserEntityById(userId);
         UserDto userDto = modelMapper.map(user, UserDto.class);
+        userDto.setRoleName(user.getRole().getName());
         userDto.setPermissionDtoSet(
                 user.getRole().getPermissions().stream()
                         .map(permission -> modelMapper.map(permission, PermissionDto.class))

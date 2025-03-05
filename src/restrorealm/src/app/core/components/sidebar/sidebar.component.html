@@ -45,6 +45,14 @@
             <span *ngIf="isExpanded">Reservations</span>
         </a>
 
+        <a *ngIf="readAllReservations" 
+           routerLink="/my-reservations" 
+           routerLinkActive="active" 
+           class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span *ngIf="isExpanded">My Reservations</span>
+        </a>
+
         <a *ngIf="readAllKitchenOrders" 
            routerLink="/kitchen" 
            routerLinkActive="active" 

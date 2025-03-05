@@ -36,7 +36,8 @@ public class WebSecurityConfig {
             "/api/v1/category/public/**",
             "/api/v1/menu-item/public/**",
             "/images/**",
-            "/images/menu/**"
+            "/images/menu/**",
+            "/ws/**"
     };
 
     @Bean

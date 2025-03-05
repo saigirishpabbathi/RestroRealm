@@ -64,6 +64,7 @@ export class CheckoutComponent {
   
     this.orderService.createOrder(orderData).subscribe({
       next: (order) => {
+        console.log('Order created:', order);
         this.router.navigate(['/payment'], { 
           queryParams: { orderId: order.orderId, method: this.shippingInfo.paymentMethod } 
         }).then(navigationResult => {

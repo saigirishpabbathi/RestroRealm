@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.letusbuild.restrorealm.dto.PaymentResponseDto;
 import com.letusbuild.restrorealm.entity.Enum.OrderStatus;
 import jakarta.persistence.*;
@@ -40,8 +41,10 @@ public class Order extends BaseEntity{
     private String orderNumber;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private OrderStatus status;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private PaymentEntity payment;
 }
