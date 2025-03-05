@@ -27,6 +27,8 @@ public class UserDto {
 
     private boolean deleted;
 
+    private String roleName;
+
     Set<PermissionDto> permissionDtoSet = new HashSet<>();
 
 }

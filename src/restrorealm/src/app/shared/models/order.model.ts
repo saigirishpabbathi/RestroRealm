@@ -22,4 +22,19 @@ export interface Order {
     city: string;
     state: string;
     postalCode: number;
+    orderDetails: OrderDetails;
+  }
+
+  
+  export interface OrderDetails {
+    reservationDate: any;
+    reservationTime: any;
+    numberOfGuests: number;
+    specialRequests: any;
+    orderType: 'delivery' | 'pickup' | 'dine-in';
+    orderFor: 'self' | 'friend';
+    tableId: number | null;
+    pickupTime: string;
+    customPickupTime: string;
+    notes: string;
   }
