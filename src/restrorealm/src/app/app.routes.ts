@@ -24,8 +24,10 @@ import { OrderGuard } from './core/guards/order/order.guard';
 import { AllReservationsComponent } from './features/all-reservations/all-reservations.component';
 import { MyReservationsComponent } from './features/users/my-reservations/my-reservations.component';
 import { AllOrdersComponent } from './features/all-orders/all-orders.component';
+import { HomeComponent } from './pages/home/home.component';
 
 export const routes: Routes = [
+    { path :'home', component: HomeComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'categories', component: CategoryPageComponent },
@@ -51,5 +53,5 @@ export const routes: Routes = [
     { path: 'orders', component: AllOrdersComponent, canActivate: [AuthGuard]  },
     { path: 'my-reservations', component: MyReservationsComponent, canActivate: [AuthGuard]  },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: '**', redirectTo: '/login' }
+    { path: '**', redirectTo: '/home' }
 ];
