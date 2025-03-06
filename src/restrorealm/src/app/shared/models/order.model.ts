@@ -23,6 +23,7 @@ export interface Order {
     state: string;
     postalCode: number;
     orderDetails: OrderDetails;
+    deliveryInstructions?: any;
   }
 
   

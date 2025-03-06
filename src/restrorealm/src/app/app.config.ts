@@ -8,6 +8,7 @@ import { OrderService } from './core/services/orders/order.service';
 import { WebSocketService } from './core/services/web-socket-service/web-socket.service';
 import { AuthService } from './core/services/auth/auth.service';
 import { NotificationService } from './core/services/notification/notification.service';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), 
     provideClientHydration(withEventReplay()), 
     provideHttpClient(),
+    provideAnimations(),
     WebSocketService,
     OrderService,
     NotificationService,
