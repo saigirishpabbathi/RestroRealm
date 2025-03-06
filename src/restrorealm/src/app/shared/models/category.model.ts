@@ -5,5 +5,6 @@ export interface Category {
     availableStartTime: string;
     availableEndTime: string;
     imageUrl?: string;
+    description?: string;
   }
   
