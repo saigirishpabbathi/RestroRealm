@@ -62,10 +62,10 @@
         <div class="feast-item" *ngFor="let item of cartItems$ | async" [class.removing]="removingItemId === item?.menuItem?.id">
           <div class="item-image-container">
             <div class="glow-effect"></div>
-            <div class="food-image-placeholder" [style.background-color]="getRandomPastelColor(item?.menuItem?.id)">
+            <div class="food-image-placeholder" [style.background-color]="getRandomPastelColor(item?.menuItem?.id ?? 0)">
               <img *ngIf="item?.menuItem?.imageUrl" [src]="item?.menuItem?.imageUrl" alt="{{ item?.menuItem?.name }}" class="food-image">
               <div *ngIf="!item?.menuItem?.imageUrl" class="placeholder-icon">
-                <span class="food-initial">{{ item?.menuItem?.name.charAt(0) }}</span>
+                <span class="food-initial">{{ (item?.menuItem?.name ?? '').charAt(0) }}</span>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@
               <h3 class="item-name">{{ item?.menuItem?.name }}</h3>
               <div class="taste-tags">
                 <span class="taste-tag">Delicious</span>
-                <span class="taste-tag" *ngIf="item?.menuItem?.basePrice > 10">Premium</span>
+                <span class="taste-tag" *ngIf="(item?.menuItem?.basePrice ?? 0) > 10">Premium</span>
               </div>
             </div>
             
@@ -106,7 +106,7 @@
                 <span class="price-unit">${{ item?.menuItem?.basePrice }}</span>
               </div>
               
-              <button class="remove-item-btn" (click)="removeItem(item?.menuItem?.id)">
+              <button class="remove-item-btn" (click)="removeItem(item?.menuItem?.id!)">
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
                   <path d="M3 6h18"></path>
                   <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
@@ -172,10 +172,10 @@
           </div>
         </div>
         
-        <div class="promo-code">
+        <!-- <div class="promo-code">
           <input type="text" placeholder="Promo Code" class="promo-input" [(ngModel)]="promoCode">
           <button class="apply-promo" [disabled]="!promoCode">Apply</button>
-        </div>
+        </div> -->
         
         <a routerLink="/checkout" class="checkout-button">
           <span class="btn-text">Proceed to Checkout</span>
