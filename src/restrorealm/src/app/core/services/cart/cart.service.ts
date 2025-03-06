@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { MenuItem } from '../../../shared/models/MenuItem.model';
 
 export interface CartItem {
   menuItem: any;
   quantity: number;
-}
-export interface MenuItem {
-  id: number;
-  name: string;
-  basePrice: number;
 }
 
 @Injectable({

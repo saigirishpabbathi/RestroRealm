@@ -25,15 +25,8 @@ export class CategoryPageComponent implements OnInit {
   showAgeVerification: boolean = false;
   tempBirthDate: string = '';
   private ageVerificationResolve: ((value: boolean) => void) | null = null;
-  
-  // Placeholder image path for missing images
-  placeholderImagePath: string = 'assets/placeholder-food.jpg';
-  
-  // Category being verified for age restriction
+  placeholderImagePath: string = 'https://www.partstown.com/about-us/wp-content/uploads/2023/07/Most-Profitable-Restaurant-Menu-Items-Menu-Stars.jpg';
   currentCategory: Category | null = null;
-  
-  // Store verified age status (set after successful age verification)
-  // Using static properties to persist across page navigations
   private static userVerifiedAge: boolean = false;
   private static userDateOfBirth: string | null = null;
 
@@ -45,12 +38,10 @@ export class CategoryPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchCategories();
-    // Keep currentTime updated
     setInterval(() => {
       this.currentTime = new Date();
-    }, 60000); // Update every minute
+    }, 60000);
     
-    // Check if user is logged in and has DOB stored in their profile
     const userInfo = this.authService.getUserInfo();
     if (userInfo && userInfo.dateOfBirth) {
       CategoryPageComponent.userDateOfBirth = userInfo.dateOfBirth;
@@ -65,8 +56,7 @@ export class CategoryPageComponent implements OnInit {
     this.menuService.getCategoriesNoHeaders().subscribe({
       next: (categories) => {
         this.categories = categories.map(category => ({
-          ...category,
-          imageUrl: category.imageUrl || this.placeholderImagePath
+          ...category
         }));
         this.filteredCategories = [...this.categories];
       },
@@ -76,7 +66,6 @@ export class CategoryPageComponent implements OnInit {
     });
   }
   
-  // Search categories
   searchCategories(term: string): void {
     this.searchTerm = term.toLowerCase().trim();
     if (!this.searchTerm) {
@@ -89,17 +78,19 @@ export class CategoryPageComponent implements OnInit {
     );
   }
 
-  // Get category image URL with fallback
   getCategoryImageUrl(category: Category): string {
-    return (category && category.imageUrl) 
-      ? this.imageUrl + category.imageUrl 
-      : this.placeholderImagePath;
+    if (!category || !category.imageUrl) {
+      return this.placeholderImagePath;
+    }
+    
+    return category.imageUrl.startsWith('http') 
+      ? category.imageUrl 
+      : this.imageUrl + category.imageUrl;
   }
 
-  // Check if a category is available based on time
   isCategoryAvailable(category: Category): boolean {
     if (!category || !category.availableStartTime || !category.availableEndTime) {
-      return true; // If availability times aren't set, assume always available
+      return true;
     }
 
     const now = this.currentTime;
@@ -117,22 +108,19 @@ export class CategoryPageComponent implements OnInit {
 
   navigateToMenu(category: Category) {
     if (!this.isCategoryAvailable(category)) {
-      return; // Already disabled, but this is a safeguard
+      return;
     }
   
     if (category.ageRestricted) {
-      // First check if user already verified their age during this session
       if (CategoryPageComponent.userVerifiedAge) {
         this.redirectToMenu(category.name);
         return;
       }
       
-      // Next check if user is logged in with DOB in profile
       const dob = this.authService.getUserInfo()?.dateOfBirth;
       const userAge = this.calculateAge(dob);
 
       if (userAge === null) {
-        // If user already provided DOB in this session but not logged in
         if (CategoryPageComponent.userDateOfBirth) {
           const sessionAge = this.calculateAge(CategoryPageComponent.userDateOfBirth);
           if (sessionAge !== null && sessionAge >= 18) {
@@ -145,7 +133,6 @@ export class CategoryPageComponent implements OnInit {
           }
         }
         
-        // Need to ask for verification
         this.currentCategory = category;
         this.verifyAge().then(verified => {
           if (verified && this.currentCategory) {
@@ -160,7 +147,6 @@ export class CategoryPageComponent implements OnInit {
         alert('You must be at least 18 years old to access this category');
         return;
       } else {
-        // User is verified through profile
         CategoryPageComponent.userVerifiedAge = true;
       }
     }
@@ -182,7 +168,6 @@ export class CategoryPageComponent implements OnInit {
       const age = this.calculateAge(birthDate);
       const isVerified = age !== null && age >= 18;
       
-      // Store the verification status and DOB for future checks in this session
       if (isVerified) {
         CategoryPageComponent.userVerifiedAge = true;
         CategoryPageComponent.userDateOfBirth = this.tempBirthDate;
