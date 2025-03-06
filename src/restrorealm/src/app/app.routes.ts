@@ -26,6 +26,7 @@ import { MyReservationsComponent } from './features/users/my-reservations/my-res
 import { AllOrdersComponent } from './features/all-orders/all-orders.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 
 export const routes: Routes = [
     { path :'home', component: HomeComponent },
@@ -33,6 +34,7 @@ export const routes: Routes = [
     { path: 'menu', component: MenuPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
     { path: 'about', component: AboutUsComponent},
+    { path: 'contact', component: ContactUsComponent},
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
