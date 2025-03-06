@@ -91,6 +91,7 @@
     border: none;
     color: white;
     border-radius: 50%;
+    cursor: pointer;
   }
   
   .sidebar-toggle i, .nav-menu-toggle i {
