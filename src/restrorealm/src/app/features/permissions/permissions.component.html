@@ -415,13 +415,13 @@
     </div>
 
     <!-- Toast Notification -->
-    <div class="luxury-toast luxury-toast-{{toast?.type}}" *ngIf="toast">
+    <div class="luxury-toast luxury-toast-{{toast.type}}" *ngIf="toast">
         <div class="luxury-toast-icon">
-            <i class="fas" [class.fa-check-circle]="toast?.type === 'success'" [class.fa-exclamation-circle]="toast?.type === 'error'"></i>
+            <i class="fas" [class.fa-check-circle]="toast.type === 'success'" [class.fa-exclamation-circle]="toast.type === 'error'"></i>
         </div>
         <div class="luxury-toast-content">
-            <h3 class="luxury-toast-title">{{ toast?.type === 'success' ? 'Success' : 'Error' }}</h3>
-            <p class="luxury-toast-message">{{ toast?.message }}</p>
+            <h3 class="luxury-toast-title">{{ toast.type === 'success' ? 'Success' : 'Error' }}</h3>
+            <p class="luxury-toast-message">{{ toast.message }}</p>
         </div>
     </div>
 </div>
