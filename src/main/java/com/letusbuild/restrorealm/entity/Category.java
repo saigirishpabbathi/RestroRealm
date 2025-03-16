@@ -1,11 +1,14 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -34,4 +37,8 @@ public class Category extends BaseEntity {
 
     @Column
     private String imagePath;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "categories")
+    private List<MenuAddOn> menuAddOns = new ArrayList<>();
 }
