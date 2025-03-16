@@ -128,6 +128,15 @@ export class SettingsComponent implements OnInit {
           lastUpdated: new Date('2025-03-04')
         },
         { 
+          name: 'Menu Options', 
+          description: 'Create and manage additional options, toppings and customizations for menu items', 
+          navigateTo: '/settings/menu-option', 
+          isVisible: this.hasPermission('READ_ALL_MENU_OPTIONS'), 
+          icon: 'fas fa-list-alt',
+          count: 0,
+          lastUpdated: new Date('2025-03-17')
+        },
+        { 
           name: 'Users', 
           description: 'Manage user accounts, profiles, access controls and authentication settings', 
           navigateTo: '/settings/users', 
@@ -187,6 +196,7 @@ export class SettingsComponent implements OnInit {
     if (lowerName.includes('permission')) return 'permissions';
     if (lowerName.includes('category')) return 'category';
     if (lowerName.includes('add-on') || lowerName.includes('addon')) return 'addon';
+    if (lowerName.includes('option') || lowerName.includes('option')) return 'option';
     if (lowerName.includes('user')) return 'users';
     return '';
   }

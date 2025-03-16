@@ -271,11 +271,17 @@
   color: white;
 }
 
+.setting-icon.fa-list-alt {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  color: white;
+}
+
 .setting-item:hover .setting-icon.fa-users-cog, 
 .setting-item:hover .setting-icon.fa-user-friends,
 .setting-item:hover .setting-icon.fa-shield-alt,
 .setting-item:hover .setting-icon.fa-tags,
-.setting-item:hover .setting-icon.fa-plus-circle {
+.setting-item:hover .setting-icon.fa-plus-circle ,
+.setting-item:hover .setting-icon.fa-list-alt {
   transform: scale(1.1) rotate(-10deg);
 }
 
@@ -398,7 +404,7 @@
   color: white;
 }
 
-.addon {
+.addon, .option {
   background: linear-gradient(to right, #10B981, #34D399);
   color: white;
 }
