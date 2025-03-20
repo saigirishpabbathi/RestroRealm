@@ -137,6 +137,15 @@ export class SettingsComponent implements OnInit {
           lastUpdated: new Date('2025-03-17')
         },
         { 
+          name: 'Menu Customizations', 
+          description: 'Create and manage additional customizations, toppings and customizations for menu items', 
+          navigateTo: '/settings/menu-customization', 
+          isVisible: this.hasPermission('READ_ALL_CUSTOMIZATIONS'), 
+          icon: 'fas fa-wrench',
+          count: 0,
+          lastUpdated: new Date('2025-03-17')
+        },
+        { 
           name: 'Users', 
           description: 'Manage user accounts, profiles, access controls and authentication settings', 
           navigateTo: '/settings/users', 

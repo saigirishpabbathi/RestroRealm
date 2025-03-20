@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -47,8 +48,10 @@ public class MenuItem extends BaseEntity {
     private Category category;
 
     @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Customization> customizations;
 
     @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<MenuAddOn> addOns;
 }

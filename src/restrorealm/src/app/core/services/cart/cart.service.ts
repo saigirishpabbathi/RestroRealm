@@ -58,6 +58,7 @@ export class CartService {
   }
 
   addToCart(menuItem: MenuItem): void {
+    console.log(menuItem, this.cartItems$);
     if (!menuItem?.id) {
       console.warn('Attempted to add invalid item to cart');
       return;
@@ -74,7 +75,7 @@ export class CartService {
           id: menuItem.id,
           name: menuItem.name,
           basePrice: menuItem.basePrice,
-          image: menuItem.image,
+          imageUrl: menuItem.imageUrl,
           description: menuItem.description,
           calories: menuItem.calories
         }, 

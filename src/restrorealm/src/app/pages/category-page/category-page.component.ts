@@ -79,13 +79,7 @@ export class CategoryPageComponent implements OnInit {
   }
 
   getCategoryImageUrl(category: Category): string {
-    if (!category || !category.imageUrl) {
-      return this.placeholderImagePath;
-    }
-    
-    return category.imageUrl.startsWith('http') 
-      ? category.imageUrl 
-      : this.imageUrl + category.imageUrl;
+    return this.getImagePath(category) || this.placeholderImagePath;
   }
 
   isCategoryAvailable(category: Category): boolean {
@@ -211,5 +205,23 @@ export class CategoryPageComponent implements OnInit {
 
   private redirectToMenu(categoryName: string) {
     this.router.navigate(['/menu', encodeURIComponent(categoryName)]);
+  }
+    
+  getImagePath(item: any): string {
+      if (!item) return '';
+      
+      if (item.imagePath) {
+          return item.imagePath.startsWith('http') 
+              ? item.imagePath 
+              : this.imageUrl + item.imagePath;
+      }
+      
+      if (item.imageUrl) {
+          return item.imageUrl.startsWith('http')
+              ? item.imageUrl
+              : this.imageUrl + item.imageUrl;
+      }
+      
+      return '';
   }
 }
