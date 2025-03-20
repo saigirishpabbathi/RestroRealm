@@ -1,5 +1,6 @@
 package com.letusbuild.restrorealm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.letusbuild.restrorealm.entity.Enum.SpiceLevel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -40,6 +41,7 @@ public class MenuAddOn extends BaseEntity {
     private boolean isSuggested;
 
     @ManyToOne
+    @JsonBackReference
     private MenuItem menuItem;
 
     @Column

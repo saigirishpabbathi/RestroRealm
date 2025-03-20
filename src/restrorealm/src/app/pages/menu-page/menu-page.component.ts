@@ -7,8 +7,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CartService } from '../../core/services/cart/cart.service';
 import { ToasterComponent } from "../../shared/components/toaster/toaster.component";
 import { environment } from '../../../environments/environment';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, finalize } from 'rxjs';
 import { MenuItem } from '../../shared/models/MenuItem.model';
+import { get } from 'http';
 
 @Component({
   selector: 'app-menu',
@@ -59,7 +60,7 @@ export class MenuPageComponent implements OnInit {
     
     this.route.paramMap.subscribe(params => {
       this.categoryName = params.get('categoryName') || '';
-      this.loading = true;
+      this.loading = true;      
       if (this.categoryName && this.categoryName !== 'All') {
         this.checkCategoryAvailability();
       } else {
@@ -76,6 +77,7 @@ export class MenuPageComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching all categories:', err);
+        this.showToast("Could not load categories", "error");
       }
     });
   }
@@ -86,7 +88,13 @@ export class MenuPageComponent implements OnInit {
       const category = this.categories.find(cat => 
         cat.name.toLowerCase() === this.categoryName.toLowerCase()
       );
-      this.categoryAvailable = category ? !category.unavailable : false;
+      
+      if (category) {
+        this.categoryAvailable = !category.unavailable;
+      } else {
+        this.categoryAvailable = false;
+      }
+      
       this.fetchMenuItems();
     } else {
       // Otherwise fetch them
@@ -96,7 +104,13 @@ export class MenuPageComponent implements OnInit {
           const category = categories.find(cat => 
             cat.name.toLowerCase() === this.categoryName.toLowerCase()
           );
-          this.categoryAvailable = category ? !category.unavailable : false;
+          
+          if (category) {
+            this.categoryAvailable = !category.unavailable;
+          } else {
+            this.categoryAvailable = false;
+          }
+          
           this.fetchMenuItems();
         },
         error: (err) => {
@@ -121,31 +135,82 @@ export class MenuPageComponent implements OnInit {
   fetchMenuItems(): void {
     if(!this.categoryName || this.categoryName === "All") {
       this.categoryName = "All";
-      this.menuService.getAllMenuItemsNoHeaders().subscribe({
+      this.menuService.getAllMenuItemsNoHeaders().pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      ).subscribe({
         next: (menuItems) => {
+          if (!menuItems || menuItems.length === 0) {
+            console.warn('No menu items received from API');
+            this.showToast("No menu items found", "error");
+          }
           this.processMenuItems(menuItems);
         },
         error: (err) => {
           console.error('Error fetching menu items:', err);
           this.showToast("Could not load menu items", "error");
-          this.loading = false;
         }
       });
     } else {
-      this.menuService.getMenuItemsByCategoryNameNoHeaders(this.categoryName).subscribe({
+      this.menuService.getMenuItemsByCategoryNameNoHeaders(this.categoryName).pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      ).subscribe({
         next: (menuItems) => {
-          this.processMenuItems(menuItems);
+          if (!menuItems || menuItems.length === 0) {
+            console.warn(`No menu items found for category: ${this.categoryName}`);
+            // Try with different casing as a fallback
+            this.tryAlternativeCategoryFetch();
+          } else {
+            this.processMenuItems(menuItems);
+          }
         },
         error: (err) => {
-          console.error('Error fetching menu items:', err);
-          this.showToast("Could not load menu items", "error");
-          this.loading = false;
+          console.error(`Error fetching menu items for category ${this.categoryName}:`, err);
+          this.showToast("Could not load menu items for this category", "error");
+          // Try a fallback method
+          this.tryAlternativeCategoryFetch();
         }
       });
     }
   }
 
-  processMenuItems(menuItems: any[]): void {
+  // Fallback method to try different cases for category name
+  tryAlternativeCategoryFetch(): void {
+    // Try with capitalized first letter
+    const capitalizedCategory = this.categoryName.charAt(0).toUpperCase() + this.categoryName.slice(1).toLowerCase();    
+    this.menuService.getMenuItemsByCategoryNameNoHeaders(capitalizedCategory).pipe(
+      finalize(() => {
+        this.loading = false;
+      })
+    ).subscribe({
+      next: (menuItems) => {
+        if (menuItems && menuItems.length > 0) {
+          this.processMenuItems(menuItems);
+        } else {
+          console.warn('No menu items found with alternative category casing');
+          this.processMenuItems([]); // Process empty array to update UI
+        }
+      },
+      error: (err) => {
+        console.error('Error in fallback category fetch:', err);
+        this.processMenuItems([]); // Process empty array to update UI
+      }
+    });
+  }
+
+  processMenuItems(menuItems: any[]): void {    
+    // Handle undefined or null menuItems
+    if (!menuItems) {
+      console.warn('Received undefined or null menuItems array');
+      this.menuItems = [];
+      this.filteredItems = [];
+      this.loading = false;
+      return;
+    }
+    
     // Transform and add extra properties for UI enhancement
     this.menuItems = menuItems.map(item => {
       // Check if item should be marked as new (created within last 60 days)
@@ -162,6 +227,7 @@ export class MenuPageComponent implements OnInit {
         isNew: isNewItem,
         isVegetarian: item.isVegetarian || false,
         isSpicy: item.isSpicy || false,
+        imageUrl: item.imagePath || item.imageUrl || null, // Handle different property names
       };
       
       // Add customization options only if the item type supports it
@@ -199,18 +265,18 @@ export class MenuPageComponent implements OnInit {
     if (this.categoryName === "All") {
       if (item.categoryId && this.categories.length > 0) {
         const itemCategory = this.categories.find(cat => cat.id === item.categoryId);
-        if (itemCategory) {
-          return itemCategory.unavailable || item.unavailable || false;
+        if (itemCategory && itemCategory.unavailable) {
+          return true; // Category is unavailable
         }
       }
-    } else {
-      // If viewing a specific category, use the category's availability and item's own availability
-      return !this.categoryAvailable || item.unavailable || false;
+    } else if (!this.categoryAvailable) {
+      return true; // Current category is unavailable
     }
     
-    // Fallback to item's own unavailable status
-    return item.unavailable || false;
+    // Only mark as unavailable if explicitly set to unavailable
+    return item.unavailable === true || item.isAvailable === false;
   }
+
 
   shouldHaveCustomizations(item: any): boolean {
     // Determine if an item should have customizations based on its type
@@ -322,8 +388,8 @@ export class MenuPageComponent implements OnInit {
     } else {
       const search = this.searchTerm.toLowerCase();
       this.filteredItems = this.menuItems.filter(item => 
-        item.name.toLowerCase().includes(search) || 
-        item.description.toLowerCase().includes(search)
+        item.name?.toLowerCase().includes(search) || 
+        item.description?.toLowerCase().includes(search)
       );
     }
     this.sortItems();
@@ -332,16 +398,16 @@ export class MenuPageComponent implements OnInit {
   sortItems(): void {
     switch (this.sortOption) {
       case 'name':
-        this.filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+        this.filteredItems.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
         break;
       case 'price-low':
-        this.filteredItems.sort((a, b) => a.basePrice - b.basePrice);
+        this.filteredItems.sort((a, b) => (a.basePrice || 0) - (b.basePrice || 0));
         break;
       case 'price-high':
-        this.filteredItems.sort((a, b) => b.basePrice - a.basePrice);
+        this.filteredItems.sort((a, b) => (b.basePrice || 0) - (a.basePrice || 0));
         break;
       case 'calories-low':
-        this.filteredItems.sort((a, b) => a.calories - b.calories);
+        this.filteredItems.sort((a, b) => (a.calories || 0) - (b.calories || 0));
         break;
     }
   }
@@ -352,7 +418,7 @@ export class MenuPageComponent implements OnInit {
     this.cartService.addToCart({
       id: menuItem.id,
       name: menuItem.name,
-      image: menuItem.image,
+      imageUrl: this.getImageUrl(menuItem),
       description: menuItem.description,
       basePrice: menuItem.basePrice,
       calories: menuItem.calories,
@@ -435,7 +501,7 @@ export class MenuPageComponent implements OnInit {
     const customizedItem: MenuItem = {
       id: this.selectedItem.id,
       name: this.selectedItem.name,
-      image: this.selectedItem.image,
+      imageUrl: this.getImageUrl(this.selectedItem),
       description: this.selectedItem.description,
       basePrice: this.calculateTotalPrice() / this.orderQuantity, // Unit price with customizations
       calories: this.selectedItem.calories,

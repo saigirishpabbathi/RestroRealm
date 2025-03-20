@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -13,6 +13,7 @@ export class MenuService {
   private readonly menuItemsSubject = new BehaviorSubject<any[]>([]);
   private readonly categories$ = this.categoriesSubject.asObservable();
   private readonly menuItems$ = this.menuItemsSubject.asObservable();
+  
   constructor(
       private http: HttpClient,
       @Inject(PLATFORM_ID) private platformId: Object, 
@@ -31,6 +32,7 @@ export class MenuService {
         'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
       });
     }
+    
     private getHeadersNoJson() {
       return new HttpHeaders({
         'Authorization': `Bearer ${this.authService.getRefreshToken()}`,
@@ -39,6 +41,13 @@ export class MenuService {
   
   getAllMenuItems(): Observable<any[]> {
       this.http.get<any[]>(`${this.apiUrl}/menu-item/`, { headers: this.getHeaders() })
+        .pipe(
+          tap(data => console.log('Menu items received:', data)),
+          catchError(error => {
+            console.error('Error fetching menu items:', error);
+            return of([]);
+          })
+        )
         .subscribe({
           next: (menuItems) => {
             this.menuItemsSubject.next(menuItems);
@@ -52,35 +61,52 @@ export class MenuService {
   }
   
   getAllMenuItemsNoHeaders(): Observable<any[]> {
-      return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/all/`);
+      return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/all/`)
+        .pipe(
+          tap(data => console.log('Public menu items received:', data)),
+          catchError(error => {
+            console.error('Error fetching public menu items:', error);
+            return of([]);
+          })
+        );
   }
   
   getMenuItemsByCategory(categoryId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryId}`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${categoryId}`, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error(`Error fetching items for category ${categoryId}:`, error);
+          return of([]);
+        })
+      );
   }
   
   getMenuItemsByCategoryNoHeaders(categoryId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${categoryId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${categoryId}`)
+      .pipe(
+        catchError(error => {
+          console.error(`Error fetching public items for category ${categoryId}:`, error);
+          return of([]);
+        })
+      );
   }
 
   getMenuItemById(itemId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() });
+    return this.http.get<any>(`${this.apiUrl}/menu-item/${itemId}`, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error(`Error fetching item ${itemId}:`, error);
+          throw error;
+        })
+      );
   }
-
-  // createMenuItem(item: any): Observable<any> {
-  //   return this.http.post<any>(`${this.apiUrl}/menu-item/`, item, { headers: this.getHeaders() });
-  // }
-
-  // updateMenuItem(itemId: number, item: any): Observable<any> {
-  //   return this.http.put<any>(`${this.apiUrl}/menu-item/${itemId}`, item, { headers: this.getHeaders() });
-  // }
 
   createMenuItem(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/menu-item/`, formData, { headers: this.getHeadersNoJson() });
   }
 
   updateMenuItem(menuItemId: number, formData: FormData): Observable<any> {
-      return this.http.put(`${this.apiUrl}/menu-item/${menuItemId}`, formData, { headers: this.getHeadersNoJson() });
+    return this.http.put(`${this.apiUrl}/menu-item/${menuItemId}`, formData, { headers: this.getHeadersNoJson() });
   }
 
   deleteMenuItem(itemId: number): Observable<any> {
@@ -89,6 +115,13 @@ export class MenuService {
 
   getCategories(): Observable<any[]> {
     this.http.get<any[]>(`${this.apiUrl}/category/`, { headers: this.getHeaders() })
+      .pipe(
+        tap(data => console.log('Categories received:', data)),
+        catchError(error => {
+          console.error('MenuService - Error fetching categories:', error);
+          return of([]);
+        })
+      )
       .subscribe({
         next: (categories) => {
           this.categoriesSubject.next(categories);
@@ -102,7 +135,14 @@ export class MenuService {
   }
 
   getCategoriesNoHeaders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/category/public/all/`);
+    return this.http.get<any[]>(`${this.apiUrl}/category/public/all/`)
+      .pipe(
+        tap(data => console.log('Public categories received:', data)),
+        catchError(error => {
+          console.error('Error fetching public categories:', error);
+          return of([]);
+        })
+      );
   }
   
   getCategoryById(categoryId: string): Observable<any> {
@@ -122,10 +162,27 @@ export class MenuService {
   }
 
   getMenuItemsByCategoryName(categoryName: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${encodeURIComponent(categoryName)}`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${encodeURIComponent(categoryName)}`, { 
+      headers: this.getHeaders() 
+    }).pipe(
+      tap(data => console.log(`Items for category '${categoryName}' received:`, data)),
+      catchError(error => {
+        console.error(`Error fetching items for category '${categoryName}':`, error);
+        return of([]);
+      })
+    );
   }
 
   getMenuItemsByCategoryNameNoHeaders(categoryName: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${encodeURIComponent(categoryName)}`);
+    return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${encodeURIComponent(categoryName)}`)
+      .pipe(
+        tap(data => console.log(`Public items for category '${categoryName}' received:`, data.length)),
+        catchError(error => {
+          console.error(`Error fetching public items for category '${categoryName}':`, error);
+          console.error(`Status: ${error.status}, Message: ${error.statusText}`);
+          console.error(`URL called: ${this.apiUrl}/menu-item/public/category/${encodeURIComponent(categoryName)}`);
+          return of([]);
+        })
+      );
   }
 }

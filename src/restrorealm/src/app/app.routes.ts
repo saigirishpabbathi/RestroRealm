@@ -27,6 +27,7 @@ import { AllOrdersComponent } from './features/all-orders/all-orders.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
+import { MenuCustomizationComponent } from './features/menu-customization/menu-customization.component';
 
 export const routes: Routes = [
     { path :'home', component: HomeComponent },
@@ -47,6 +48,7 @@ export const routes: Routes = [
     { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-addon', component: MenuAddonComponent, canActivate: [AuthGuard] },
     { path: 'settings/menu-option', component: MenuOptionComponent, canActivate: [AuthGuard] },
+    { path: 'settings/menu-customization', component: MenuCustomizationComponent, canActivate: [AuthGuard] },
     { path: 'profile', component: UserProfileComponent, canActivate:[AuthGuard] },
     { path: 'cart', component: CartComponent },
     { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
