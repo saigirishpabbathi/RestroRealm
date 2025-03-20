@@ -768,37 +768,11 @@ export class MenuComponent implements OnInit {
         return this.authService.hasPermission(permission);
     }
 
-<<<<<<< HEAD
-    onImageSelect(event: Event) {
-        const input = event.target as HTMLInputElement;
-        if (input.files && input.files.length > 0) {
-            const file = input.files[0];
-            this.menuForm.patchValue({ image: file });
-        }
-    }    
-    getImagePath(item: any): string {
-        if (!item) return '';
-        
-        if (item.imagePath) {
-            return item.imagePath.startsWith('http') 
-                ? item.imagePath 
-                : this.apiUrl + item.imagePath;
-        }
-        
-        if (item.imageUrl) {
-            return item.imageUrl.startsWith('http')
-                ? item.imageUrl
-                : this.apiUrl + item.imageUrl;
-        }
-        
-        return '';
-=======
     availableMenuItems() {
         return this.menuItems.filter(item => !item.unavailable).length;
     }
 
     customizedMenuItems() {
         return this.menuItems.filter(item => item.customizable).length;
->>>>>>> db1e2a9f7ec277165a03380c1f1c9fb4ccfc93f1
     }
 }
