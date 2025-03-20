@@ -7,14 +7,9 @@ import { switchMap, catchError, take } from 'rxjs/operators';
 import { of, Subscription, lastValueFrom } from 'rxjs';
 import { OrderService } from '../../core/services/orders/order.service';
 import { environment } from '../../../environments/environment';
-interface PaymentResponse {
-  status: string;
-  amount: number;
-  paymentId: string;
-  orderId: number;
-  error?: string;
-  orderNumber?: string;
-}
+import { OrderStatus } from '../../shared/enum/order-status.enum';
+import { PaymentResponse } from './../../shared/models/payment-response.model';
+import { Order } from '../../shared/models/order.model';
 
 @Component({
   selector: 'app-payment',
@@ -25,20 +20,34 @@ interface PaymentResponse {
 })
 export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('cardElement') cardElementRef!: ElementRef;
-  @ViewChild('paypalButtonContainer', { static: false }) paypalButtonContainerRef!: ElementRef;
+  @ViewChild('paypalButtonContainer') paypalButtonContainerRef!: ElementRef;
 
   paymentForm: FormGroup;
   stripe: any;
   cardElement: any;
   paypalButton: any;
-  orderId!: string;
-  orderDetails: any;
+  orderId!: number;
+  orderDetails: Order = {} as Order; // Initialize as empty object
   paymentMethod: string | null = null;
   isProcessing = false;
   errorMessage = '';
   stripeElementLoaded = false;
   paypalLoaded = false;
   price = 0;
+  
+  // Toast notification properties
+  toastVisible = false;
+  toastMessage = '';
+  toastType = 'success'; // 'success', 'error', 'info'
+  toastTimeout: any = null;
+  
+  paymentMethods = [
+    { id: 'credit', name: 'Credit Card', icon: 'credit_card' },
+    { id: 'debit', name: 'Debit Card', icon: 'credit_card' },
+    { id: 'paypal', name: 'PayPal', icon: 'account_balance_wallet' },
+    { id: 'cash', name: 'Cash at Counter', icon: 'payments' }
+  ];
+  
   private subscriptions = new Subscription();
 
   constructor(
@@ -74,15 +83,22 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     ).subscribe(order => {
       if (!order) return;
+      
+      // Assign the entire order object to orderDetails
       this.orderDetails = order;
+      
+      // Set the price for payment processing
+      this.price = this.orderDetails.totalAmount;
+      
+      // Check if payment is already successful
       if (order.payment?.status === 'succeeded' || order.payment?.status === 'CASHIER_PENDING') {
-        this.router.navigate(['/order-confirmation', order.orderNumber]);
+        this.router.navigate(['/order-confirmation', order.orderId]);
         return;
       }
 
       this.initializePayment();
     });
-    this.price = this.cartService.getTotalPrice();
+    
     this.subscriptions.add(routeSub);
   }
 
@@ -94,6 +110,10 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.unsubscribe();
     if (this.cardElement) this.cardElement.destroy();
     if (this.paypalButton) this.paypalButton.close();
+    
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
   }
 
   private initializePayment() {
@@ -124,6 +144,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           base: {
             fontSize: '16px',
             color: '#32325d',
+            fontFamily: 'Inter, sans-serif',
+            '::placeholder': {
+              color: '#aab7c4',
+            },
+            iconColor: '#FF6B35',
+          },
+          invalid: {
+            color: '#EF476F',
+            iconColor: '#EF476F',
           }
         }
       });
@@ -135,10 +164,19 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
           this.stripeElementLoaded = true;
           this.cdRef.detectChanges();
         });
+
+        this.cardElement.on('change', (event: any) => {
+          if (event.error) {
+            this.errorMessage = event.error.message;
+          } else {
+            this.errorMessage = '';
+          }
+          this.cdRef.detectChanges();
+        });
       }
     } catch (error) {
       console.error('Stripe initialization error:', error);
-      this.errorMessage = 'Card payment unavailable. Please try another method.';
+      this.showToast('error', 'Card payment unavailable. Please try another method.');
       this.cdRef.detectChanges();
     }
   }
@@ -154,14 +192,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         style: {
           layout: 'vertical',
           color: 'blue',
-          shape: 'rect',
-          label: 'paypal'
+          shape: 'pill',
+          label: 'pay',
+          height: 40
         },
         createOrder: (data: any, actions: any) => {
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: this.orderDetails.total.toFixed(2),
+                value: this.orderDetails.totalAmount.toFixed(2),
                 currency_code: 'USD'
               }
             }]
@@ -169,6 +208,8 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         onApprove: async (data: any, actions: any) => {
           try {
+            this.isProcessing = true;
+            this.cdRef.detectChanges();
             const captureResult = await actions.order.capture();
             await this.processPaymentResult('paypal', {
               id: captureResult.id,
@@ -217,6 +258,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.isProcessing = true;
+    this.cdRef.detectChanges();
+
     try {
       const { error, paymentMethod } = await this.stripe.createPaymentMethod({
         type: 'card',
@@ -239,6 +283,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   confirmCashPayment() {
     this.isProcessing = true;
+    this.showToast('info', 'Processing your payment...');
     this.processPaymentResult('cash', { id: `cash-${Date.now()}`, success: true })
       .catch(error => this.handlePaymentError(error));
   }
@@ -247,6 +292,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     console.error('Payment Error:', error);
     this.errorMessage = error.message || 'Payment processing failed. Please try again.';
     this.isProcessing = false;
+    this.showToast('error', this.errorMessage);
     this.cdRef.detectChanges();
   }
 
@@ -259,18 +305,28 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const paymentData = {
         orderId: this.orderId,
-        amount: this.cartService.getTotalPrice(),
+        amount: this.orderDetails.totalAmount,
         currency: 'USD',
         paymentMethodId: paymentResult.id
       }
-      console.log(paymentData);
+      
       const response = await lastValueFrom(
         this.orderService.updateOrderPayment(paymentData)
       ) as PaymentResponse;
   
       if (response.status === 'succeeded' || response.status === 'CASHIER_PENDING') {
+        if(response.status === 'CASHIER_PENDING'){
+          this.orderService.updateOrderStatus(this.orderId, OrderStatus.CASHIER_PENDING).subscribe();
+          this.showToast('success', 'Payment confirmed! Please pay at the counter upon pickup.');
+        } else {
+          this.orderService.updateOrderStatus(this.orderId, OrderStatus.PAYMENT_SUCCESSFUL).subscribe();
+          this.showToast('success', 'Payment successful! Your order is being processed.');
+        }
         this.cartService.clearCart();
-        this.router.navigate(['/order-confirmation', this.orderDetails.orderNumber]);
+        
+        setTimeout(() => {
+          this.router.navigate(['/order-confirmation', this.orderDetails.orderId]);
+        }, 1500);
       } else {
         throw new Error(response.error || 'Payment failed');
       }
@@ -279,5 +335,84 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     } finally {
       this.isProcessing = false;
     }
-  }  
+  }
+  
+  goBackToCheckout() {
+    this.router.navigate(['/checkout']);
+  }
+
+  getPaymentMethodName(): string {
+    switch (this.paymentMethod) {
+      case 'credit':
+        return 'Credit Card';
+      case 'debit':
+        return 'Debit Card';
+      case 'paypal':
+        return 'PayPal';
+      case 'cash':
+        return 'Cash at Counter';
+      default:
+        return 'Credit Card';
+    }
+  }
+  
+  getPaymentIcon() {
+    const method = this.paymentMethods.find(m => m.id === this.paymentMethod);
+    return method ? method.icon : 'payment';
+  }
+  
+  showToast(type: 'success' | 'error' | 'info', message: string) {
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+    
+    this.toastType = type;
+    this.toastMessage = message;
+    this.toastVisible = true;
+    
+    this.toastTimeout = setTimeout(() => {
+      this.closeToast();
+    }, 5000);
+  }
+  
+  closeToast() {
+    this.toastVisible = false;
+  }
+  
+  formatErrorMessage(message: string): string {
+    if (message.includes('card number')) {
+      return 'Please check your card number and try again.';
+    } else if (message.includes('expiration')) {
+      return 'Please check your card expiration date.';
+    } else if (message.includes('CVC')) {
+      return 'Please check your card security code (CVC).';
+    } else {
+      return message;
+    }
+  }
+  
+  generateOrderNumber(): string {
+    return Math.random().toString(36).substr(2, 9).toUpperCase();
+  }
+  
+  estimateDeliveryTime(): string {
+    const now = new Date();
+    const minDelivery = new Date(now.getTime() + 15 * 60000);
+    const maxDelivery = new Date(now.getTime() + 30 * 60000);
+    
+    return `${this.formatTime(minDelivery)} - ${this.formatTime(maxDelivery)}`;
+  }
+  
+  private formatTime(date: Date): string {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    
+    return `${hours}:${minutesStr} ${ampm}`;
+  }
 }

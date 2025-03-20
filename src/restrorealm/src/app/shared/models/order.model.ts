@@ -17,5 +17,25 @@ export interface Order {
     taxAmount?: number;
     deliveryFee?: number;
     discount?: number;
-    // other properties as needed
+    street1: string;
+    street2: string;
+    city: string;
+    state: string;
+    postalCode: number;
+    orderDetails: OrderDetails;
+    deliveryInstructions?: any;
+  }
+
+  
+  export interface OrderDetails {
+    reservationDate: any;
+    reservationTime: any;
+    numberOfGuests: number;
+    specialRequests: any;
+    orderType: 'delivery' | 'pickup' | 'dine-in';
+    orderFor: 'self' | 'friend';
+    tableId: number | null;
+    pickupTime: string;
+    customPickupTime: string;
+    notes: string;
   }

@@ -49,4 +49,11 @@ export class ReservationService {
   getMyReservations(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/reservations/my`, { headers: this.getHeaders() });
   }
+
+  updateReservationStatus(reservationId: number, status: string) {
+    return this.http.get<any>(
+      `${this.apiUrl}/reservations/${reservationId}/status/${status}`,  
+      { headers: this.getHeaders() }
+    );
+  }
 }

@@ -28,5 +28,6 @@ public class CategoryDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm[:ss]")
     private LocalTime availableEndTime;
     private String imagePath;
+    private String imageUrl;
     private boolean deleted;
 }

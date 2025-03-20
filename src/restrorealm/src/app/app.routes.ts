@@ -24,13 +24,19 @@ import { OrderGuard } from './core/guards/order/order.guard';
 import { AllReservationsComponent } from './features/all-reservations/all-reservations.component';
 import { MyReservationsComponent } from './features/users/my-reservations/my-reservations.component';
 import { AllOrdersComponent } from './features/all-orders/all-orders.component';
+import { HomeComponent } from './pages/home/home.component';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 
 export const routes: Routes = [
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
+    { path :'home', component: HomeComponent },
     { path: 'categories', component: CategoryPageComponent },
     { path: 'menu', component: MenuPageComponent },
     { path: 'menu/:categoryName', component: MenuPageComponent },
+    { path: 'about', component: AboutUsComponent},
+    { path: 'contact', component: ContactUsComponent},
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
     { path: 'tables', component: TableComponent, canActivate: [AuthGuard] },
     { path: 'settings/users', component: UserListComponent, canActivate: [AuthGuard] },
@@ -51,5 +57,5 @@ export const routes: Routes = [
     { path: 'orders', component: AllOrdersComponent, canActivate: [AuthGuard]  },
     { path: 'my-reservations', component: MyReservationsComponent, canActivate: [AuthGuard]  },
     //{ path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: '**', redirectTo: '/login' }
+    { path: '**', redirectTo: '/home' }
 ];

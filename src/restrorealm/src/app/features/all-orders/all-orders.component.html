@@ -129,7 +129,7 @@
               <td>{{ order.createdAt | date:'short' }}</td>
               <td>
                 <div class="action-buttons">
-                  <button *ngIf="order.status === OrderStatus.PAYMENT_SUCCESSFUL" 
+                  <button *ngIf="order.status === OrderStatus.PAYMENT_SUCCESSFUL || order.status === OrderStatus.CASHIER_PENDING" 
                           class="btn btn-sm btn-primary"
                           (click)="updateOrderStatus(order, OrderStatus.CONFIRMED, $event)">
                     Confirm

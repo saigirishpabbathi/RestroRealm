@@ -1,0 +1,92 @@
+<div class="hero-section">
+    <div class="hero-content">
+      <h1>Welcome to RestroRealm</h1>
+      <p>Experience culinary excellence in every bite</p>
+      <button class="btn-primary" [routerLink]="['/menu']">View Full Menu</button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <section class="specials-section">
+      <div class="section-header">
+        <h2>Today's Special Attractions</h2>
+        <p>Our chef's handpicked delicacies for the day</p>
+      </div>
+  
+      <div class="menu-grid">
+        <div *ngFor="let item of specialItems" class="menu-card">
+          <div class="menu-img">
+            <img [src]="item.imageUrl" [alt]="item.name">
+            <span class="price">${{item.price.toFixed(2)}}</span>
+          </div>
+          <div class="menu-content">
+            <h3>{{item.name}}</h3>
+            <p class="category">{{item.category}}</p>
+            <p class="description">{{item.description}}</p>
+            <button class="btn-secondary">Add to Order</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="info-section">
+      <div class="info-card">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <h3>Opening Hours</h3>
+        <p>Mon-Fri: 11am - 10pm</p>
+        <p>Sat-Sun: 10am - 11pm</p>
+      </div>
+      
+      <div class="info-card">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </div>
+        <h3>Reservations</h3>
+        <p>Call us: (123) 123-4567</p>
+        <button class="btn-outline" [routerLink]="['/reservation']">Book a Table</button>
+      </div>
+      
+      <div class="info-card">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <h3>Our Location</h3>
+        <p>123 Culinary Avenue</p>
+        <p>Foodie District, FC 98765</p>
+      </div>
+    </section>
+    
+    <section class="testimonial-section">
+      <div class="section-header">
+        <h2>What Our Customers Say</h2>
+      </div>
+      
+      <div class="testimonial">
+        <div class="quote-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+          </svg>
+        </div>
+        <p class="testimonial-text">The flavors at RestroRealm are extraordinary! The Seared Salmon Niçoise made me feel like I was dining in a coastal French village. Definitely coming back!</p>
+        <div class="testimonial-author">
+          <p class="name">Emily Rodriguez</p>
+          <div class="stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>

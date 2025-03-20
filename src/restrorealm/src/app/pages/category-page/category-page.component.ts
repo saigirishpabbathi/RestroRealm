@@ -17,12 +17,18 @@ import { AuthService } from '../../core/services/auth/auth.service';
 })
 export class CategoryPageComponent implements OnInit {
   categories: Category[] = [];
+  filteredCategories: Category[] = [];
+  searchTerm: string = '';
   userHasPermission: boolean = false; 
   imageUrl = environment.imageUrl;
   currentTime = new Date();
   showAgeVerification: boolean = false;
   tempBirthDate: string = '';
   private ageVerificationResolve: ((value: boolean) => void) | null = null;
+  placeholderImagePath: string = 'https://www.partstown.com/about-us/wp-content/uploads/2023/07/Most-Profitable-Restaurant-Menu-Items-Menu-Stars.jpg';
+  currentCategory: Category | null = null;
+  private static userVerifiedAge: boolean = false;
+  private static userDateOfBirth: string | null = null;
 
   constructor(
     private menuService: MenuService, 
@@ -32,35 +38,107 @@ export class CategoryPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchCategories();
+    setInterval(() => {
+      this.currentTime = new Date();
+    }, 60000);
+    
+    const userInfo = this.authService.getUserInfo();
+    if (userInfo && userInfo.dateOfBirth) {
+      CategoryPageComponent.userDateOfBirth = userInfo.dateOfBirth;
+      const age = this.calculateAge(userInfo.dateOfBirth);
+      if (age !== null && age >= 18) {
+        CategoryPageComponent.userVerifiedAge = true;
+      }
+    }
   }
 
   fetchCategories(): void {
     this.menuService.getCategoriesNoHeaders().subscribe({
       next: (categories) => {
         this.categories = categories.map(category => ({
-          ...category,
-          imageUrl: category.imageUrl || 'assets/placeholder.png'
+          ...category
         }));
+        this.filteredCategories = [...this.categories];
       },
       error: (err) => {
         console.error('Error fetching categories:', err);
       }
     });
   }
+  
+  searchCategories(term: string): void {
+    this.searchTerm = term.toLowerCase().trim();
+    if (!this.searchTerm) {
+      this.filteredCategories = [...this.categories];
+      return;
+    }
+    
+    this.filteredCategories = this.categories.filter(category => 
+      category.name.toLowerCase().includes(this.searchTerm)
+    );
+  }
+
+  getCategoryImageUrl(category: Category): string {
+    if (!category || !category.imageUrl) {
+      return this.placeholderImagePath;
+    }
+    
+    return category.imageUrl.startsWith('http') 
+      ? category.imageUrl 
+      : this.imageUrl + category.imageUrl;
+  }
+
+  isCategoryAvailable(category: Category): boolean {
+    if (!category || !category.availableStartTime || !category.availableEndTime) {
+      return true;
+    }
+
+    const now = this.currentTime;
+    const [startHour, startMinute] = category.availableStartTime.split(':').map(Number);
+    const [endHour, endMinute] = category.availableEndTime.split(':').map(Number);
+    
+    const startTime = new Date();
+    startTime.setHours(startHour, startMinute, 0);
+    
+    const endTime = new Date();
+    endTime.setHours(endHour, endMinute, 0);
+
+    return now >= startTime && now <= endTime;
+  }
 
   navigateToMenu(category: Category) {
     if (!this.isCategoryAvailable(category)) {
-      alert(`This category is only available between ${category.availableStartTime} and ${category.availableEndTime}`);
       return;
     }
   
     if (category.ageRestricted) {
+      if (CategoryPageComponent.userVerifiedAge) {
+        this.redirectToMenu(category.name);
+        return;
+      }
+      
       const dob = this.authService.getUserInfo()?.dateOfBirth;
       const userAge = this.calculateAge(dob);
 
       if (userAge === null) {
+        if (CategoryPageComponent.userDateOfBirth) {
+          const sessionAge = this.calculateAge(CategoryPageComponent.userDateOfBirth);
+          if (sessionAge !== null && sessionAge >= 18) {
+            CategoryPageComponent.userVerifiedAge = true;
+            this.redirectToMenu(category.name);
+            return;
+          } else if (sessionAge !== null) {
+            alert('You must be at least 18 years old to access this category');
+            return;
+          }
+        }
+        
+        this.currentCategory = category;
         this.verifyAge().then(verified => {
-          if (verified) this.redirectToMenu(category.name);
+          if (verified && this.currentCategory) {
+            this.redirectToMenu(this.currentCategory.name);
+            this.currentCategory = null;
+          }
         });
         return;
       }
@@ -68,24 +146,12 @@ export class CategoryPageComponent implements OnInit {
       if (userAge < 18) {
         alert('You must be at least 18 years old to access this category');
         return;
+      } else {
+        CategoryPageComponent.userVerifiedAge = true;
       }
     }
 
     this.redirectToMenu(category.name);
-  }
-
-  private isCategoryAvailable(category: Category): boolean {
-    const now = this.currentTime;
-    const [startHour, startMinute] = category.availableStartTime.split(':').map(Number);
-    const [endHour, endMinute] = category.availableEndTime.split(':').map(Number);
-    
-    const startTime = new Date();
-    startTime.setHours(startHour, startMinute);
-    
-    const endTime = new Date();
-    endTime.setHours(endHour, endMinute);
-
-    return now >= startTime && now <= endTime;
   }
 
   private verifyAge(): Promise<boolean> {
@@ -100,7 +166,14 @@ export class CategoryPageComponent implements OnInit {
     if (this.tempBirthDate) {
       const birthDate = new Date(this.tempBirthDate);
       const age = this.calculateAge(birthDate);
-      this.ageVerificationResolve?.(age !== null && age >= 18);
+      const isVerified = age !== null && age >= 18;
+      
+      if (isVerified) {
+        CategoryPageComponent.userVerifiedAge = true;
+        CategoryPageComponent.userDateOfBirth = this.tempBirthDate;
+      }
+      
+      this.ageVerificationResolve?.(isVerified);
     } else {
       this.ageVerificationResolve?.(false);
     }
@@ -110,6 +183,7 @@ export class CategoryPageComponent implements OnInit {
   cancelAgeVerification() {
     this.showAgeVerification = false;
     this.ageVerificationResolve?.(false);
+    this.currentCategory = null;
     this.resetAgeVerification();
   }
 
