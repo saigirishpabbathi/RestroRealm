@@ -52,7 +52,7 @@
             
             <figure class="item-media">
                 <img 
-                    [src]="apiUrl+item.imagePath" 
+                    [src]="getImagePath(item)" 
                     [alt]="item.name"
                     class="item-image"
                     loading="lazy"

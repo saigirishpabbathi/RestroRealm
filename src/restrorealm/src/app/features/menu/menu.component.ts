@@ -201,4 +201,21 @@ export class MenuComponent implements OnInit {
             this.menuForm.patchValue({ image: file });
         }
     }    
+    getImagePath(item: any): string {
+        if (!item) return '';
+        
+        if (item.imagePath) {
+            return item.imagePath.startsWith('http') 
+                ? item.imagePath 
+                : this.apiUrl + item.imagePath;
+        }
+        
+        if (item.imageUrl) {
+            return item.imageUrl.startsWith('http')
+                ? item.imageUrl
+                : this.apiUrl + item.imageUrl;
+        }
+        
+        return '';
+    }
 }
