@@ -460,4 +460,5 @@ export class MenuPageComponent implements OnInit {
     this.toast = { message, type };
     setTimeout(() => this.toast = null, 3000);
   }
+  
 }
