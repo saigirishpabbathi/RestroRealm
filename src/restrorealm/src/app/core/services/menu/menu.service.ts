@@ -42,7 +42,7 @@ export class MenuService {
   getAllMenuItems(): Observable<any[]> {
       this.http.get<any[]>(`${this.apiUrl}/menu-item/`, { headers: this.getHeaders() })
         .pipe(
-          tap(data => console.log('Menu items received:', data)),
+          // tap(data => console.log('Menu items received:', data)),
           catchError(error => {
             console.error('Error fetching menu items:', error);
             return of([]);
@@ -63,7 +63,7 @@ export class MenuService {
   getAllMenuItemsNoHeaders(): Observable<any[]> {
       return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/all/`)
         .pipe(
-          tap(data => console.log('Public menu items received:', data)),
+          // tap(data => console.log('Public menu items received:', data)),
           catchError(error => {
             console.error('Error fetching public menu items:', error);
             return of([]);
@@ -116,7 +116,7 @@ export class MenuService {
   getCategories(): Observable<any[]> {
     this.http.get<any[]>(`${this.apiUrl}/category/`, { headers: this.getHeaders() })
       .pipe(
-        tap(data => console.log('Categories received:', data)),
+        // tap(data => console.log('Categories received:', data)),
         catchError(error => {
           console.error('MenuService - Error fetching categories:', error);
           return of([]);
@@ -137,7 +137,7 @@ export class MenuService {
   getCategoriesNoHeaders(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/category/public/all/`)
       .pipe(
-        tap(data => console.log('Public categories received:', data)),
+        // tap(data => console.log('Public categories received:', data)),
         catchError(error => {
           console.error('Error fetching public categories:', error);
           return of([]);
@@ -165,7 +165,7 @@ export class MenuService {
     return this.http.get<any[]>(`${this.apiUrl}/menu-item/category/${encodeURIComponent(categoryName)}`, { 
       headers: this.getHeaders() 
     }).pipe(
-      tap(data => console.log(`Items for category '${categoryName}' received:`, data)),
+      // tap(data => console.log(`Items for category '${categoryName}' received:`, data)),
       catchError(error => {
         console.error(`Error fetching items for category '${categoryName}':`, error);
         return of([]);
@@ -176,7 +176,7 @@ export class MenuService {
   getMenuItemsByCategoryNameNoHeaders(categoryName: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/menu-item/public/category/${encodeURIComponent(categoryName)}`)
       .pipe(
-        tap(data => console.log(`Public items for category '${categoryName}' received:`, data.length)),
+        // tap(data => console.log(`Public items for category '${categoryName}' received:`, data.length)),
         catchError(error => {
           console.error(`Error fetching public items for category '${categoryName}':`, error);
           console.error(`Status: ${error.status}, Message: ${error.statusText}`);

@@ -30,7 +30,6 @@ export class MenuAddonService {
 
   // This method both loads data and returns the observable
   loadMenuAddons(): Observable<MenuAddOn[]> {
-    console.log('Loading menu addons from API');
     this.http.get<MenuAddOn[]>(`${this.apiUrl}/menu-addon/`, { headers: this.getHeaders() })
       .subscribe({
         next: (menuAddons) => {

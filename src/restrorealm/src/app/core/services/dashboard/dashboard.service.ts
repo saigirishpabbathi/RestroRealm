@@ -192,7 +192,6 @@ export class DashboardService {
     return this.http.get<any>(`${this.apiUrl}/dashboard`)
       .pipe(
         catchError(() => {
-          console.log('Using mock dashboard data');
           return of(this.mockData.dashboard);
         })
       );
@@ -205,7 +204,6 @@ export class DashboardService {
     return this.http.get<any>(`${this.apiUrl}/dashboard/chef`)
       .pipe(
         catchError(() => {
-          console.log('Using mock chef data');
           return of(this.mockData.chef);
         })
       );
@@ -218,7 +216,6 @@ export class DashboardService {
     return this.http.get<any>(`${this.apiUrl}/dashboard/cashier`)
       .pipe(
         catchError(() => {
-          console.log('Using mock cashier data');
           return of(this.mockData.cashier);
         })
       );
@@ -231,7 +228,6 @@ export class DashboardService {
     return this.http.get<any>(`${this.apiUrl}/dashboard/server`)
       .pipe(
         catchError(() => {
-          console.log('Using mock server data');
           return of(this.mockData.server);
         })
       );
@@ -244,7 +240,6 @@ export class DashboardService {
     return this.http.get<any>(`${this.apiUrl}/dashboard/bartender`)
       .pipe(
         catchError(() => {
-          console.log('Using mock bartender data');
           return of(this.mockData.bartender);
         })
       );
@@ -257,7 +252,6 @@ export class DashboardService {
     return this.http.put<any>(`${this.apiUrl}/orders/${orderId}/status`, { status })
       .pipe(
         catchError(() => {
-          console.log(`Mock: Updated order ${orderId} status to ${status}`);
           // If using mock data, we'd update the local mock data
           this.updateMockOrderStatus(orderId, status);
           return of({ success: true });
@@ -272,7 +266,6 @@ export class DashboardService {
     return this.http.post<any>(`${this.apiUrl}/notifications/mark-read`, {})
       .pipe(
         catchError(() => {
-          console.log('Mock: Marked all notifications as read');
           // Update our local notifications
           const notifications = this.notificationsSubject.value.map(notif => ({
             ...notif,
@@ -291,7 +284,6 @@ export class DashboardService {
     this.http.get<any>(`${this.apiUrl}/notifications`)
       .pipe(
         catchError(() => {
-          console.log('Using mock notifications data');
           return of(this.mockData.notifications);
         })
       )
