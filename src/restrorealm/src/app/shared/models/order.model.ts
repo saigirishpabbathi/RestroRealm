@@ -24,6 +24,9 @@ export interface Order {
     postalCode: number;
     orderDetails: OrderDetails;
     deliveryInstructions?: any;
+    specialInstructions?: any;
+    statusHistory?: any;
+    customerVip?: any;
   }
 
   

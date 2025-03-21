@@ -111,4 +111,8 @@ export class OrderService {
   getRecentOrders(userId: number, time: number) {
     return this.http.get<any>(`${this.apiUrl}/orders/${userId}/${time}`, {headers: this.getHeaders()});
   }
+
+  getMyOrders() {
+    return this.http.get<any>(`${this.apiUrl}/orders/my-orders`, {headers: this.getHeaders()});
+  }
 }

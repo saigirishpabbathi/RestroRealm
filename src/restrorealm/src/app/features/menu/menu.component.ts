@@ -107,7 +107,7 @@ export class MenuComponent implements OnInit {
             hasAddOns: [false],
             image: [null],
             imageUrl: [''],
-            customizationGroups: this.customizationGroupsFormArray,
+            // customizationGroups: this.customizationGroupsFormArray,
             addOns: [[]]
         });
         
@@ -612,8 +612,8 @@ export class MenuComponent implements OnInit {
             isNew: this.menuForm.get('isNew')?.value,
             customizable: this.menuForm.get('customizable')?.value,
             hasAddOns: this.menuForm.get('hasAddOns')?.value,
-            customizationGroups: this.menuForm.get('customizable')?.value ? 
-                this.menuForm.get('customizationGroups')?.value : [],
+            // customizationGroups: this.menuForm.get('customizable')?.value ? 
+                // this.menuForm.get('customizationGroups')?.value : [],
             addOns: this.menuForm.get('hasAddOns')?.value ? 
                 this.menuForm.get('addOns')?.value : []
         });
