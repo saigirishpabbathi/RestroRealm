@@ -79,11 +79,7 @@ export class CategoryPageComponent implements OnInit {
   }
 
   getCategoryImageUrl(category: Category): string {
-<<<<<<< HEAD
     return this.getImagePath(category);
-=======
-    return this.getImagePath(category) || this.placeholderImagePath;
->>>>>>> db1e2a9f7ec277165a03380c1f1c9fb4ccfc93f1
   }
 
   isCategoryAvailable(category: Category): boolean {
@@ -210,7 +206,6 @@ export class CategoryPageComponent implements OnInit {
   private redirectToMenu(categoryName: string) {
     this.router.navigate(['/menu', encodeURIComponent(categoryName)]);
   }
-<<<<<<< HEAD
   getImagePath(item: any): string {
     if (!item) return '';
     
@@ -228,24 +223,4 @@ export class CategoryPageComponent implements OnInit {
     
     return '';
 }
-=======
-    
-  getImagePath(item: any): string {
-      if (!item) return '';
-      
-      if (item.imagePath) {
-          return item.imagePath.startsWith('http') 
-              ? item.imagePath 
-              : this.imageUrl + item.imagePath;
-      }
-      
-      if (item.imageUrl) {
-          return item.imageUrl.startsWith('http')
-              ? item.imageUrl
-              : this.imageUrl + item.imageUrl;
-      }
-      
-      return '';
-  }
->>>>>>> db1e2a9f7ec277165a03380c1f1c9fb4ccfc93f1
 }
