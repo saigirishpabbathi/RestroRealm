@@ -56,4 +56,5 @@ export interface MenuItem {
   addOns?: number[];
   imageUrl?: string;
   createdAt?: any;
+  featured?: boolean;
 }
