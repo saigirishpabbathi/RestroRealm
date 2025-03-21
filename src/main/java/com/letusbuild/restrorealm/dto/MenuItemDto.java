@@ -6,9 +6,7 @@ import com.letusbuild.restrorealm.entity.MenuAddOn;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -32,4 +30,7 @@ public class MenuItemDto {
     private Category category;
     private List<Customization> customizations;
     private List<MenuAddOn> addOns;
+    
+
+
 }
