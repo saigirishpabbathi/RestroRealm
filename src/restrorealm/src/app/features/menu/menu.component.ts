@@ -245,7 +245,7 @@ export class MenuComponent implements OnInit {
         
         // Apply category filter
         if (this.selectedCategory) {
-            result = result.filter(item => item.categoryId === this.selectedCategory.id);
+            result = result.filter(item => item.category?.id === this.selectedCategory.id);
         }
         
         // Apply status filter
@@ -353,7 +353,7 @@ export class MenuComponent implements OnInit {
             name: item.name,
             description: item.description,
             basePrice: item.basePrice,
-            categoryId: item.categoryId,
+            category: item.category,
             calories: item.calories,
             isVegetarian: item.isVegetarian || false,
             isSpicy: item.isSpicy || false,

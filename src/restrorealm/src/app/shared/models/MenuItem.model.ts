@@ -32,7 +32,7 @@ export interface MenuItem {
   description: string;
   basePrice: number;
   calories: number;
-  categoryId?: number;
+  category?: any;
   unavailable?: boolean;
   isNew?: boolean;
   isVegetarian?: boolean;
