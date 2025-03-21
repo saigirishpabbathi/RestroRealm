@@ -1,6 +1,7 @@
 package com.letusbuild.restrorealm.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.letusbuild.restrorealm.entity.Enum.SpiceLevel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -41,8 +42,29 @@ public class MenuItem extends BaseEntity {
     private boolean isAvailable;
 
     @Column(nullable = false)
+    private boolean isVegetarian;
+
+    @Column(nullable = false)
+    private boolean isSpicy;
+
+    @Column(nullable = false)
+    private boolean isNew;
+
+    @Column(nullable = false)
+    private boolean customizable;
+
+    @Column(nullable = false)
+    private SpiceLevel spiceLevel;
+
+    @Column(nullable = false)
+    private boolean unavailable;
+
+    @Column(nullable = false)
     @DecimalMin(value = "0.0", inclusive = true)
     private Double calories;
+
+    @Column(nullable = false)
+    private boolean hasAddOns;
 
     @ManyToOne
     private Category category;

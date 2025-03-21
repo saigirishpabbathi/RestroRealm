@@ -1,7 +1,9 @@
 package com.letusbuild.restrorealm.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.letusbuild.restrorealm.entity.Category;
 import com.letusbuild.restrorealm.entity.Customization;
+import com.letusbuild.restrorealm.entity.Enum.SpiceLevel;
 import com.letusbuild.restrorealm.entity.MenuAddOn;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +24,8 @@ public class MenuItemDto {
     @DecimalMin(value = "0.0", inclusive = true)
     private Double basePrice;
     private boolean isRestricted;
-    private boolean isAvailable;
+    @JsonProperty("unavailable")
+    private boolean unavailable;
     private String imagePath;
     @DecimalMin(value = "0.0", inclusive = true)
     private Double calories;
@@ -30,7 +33,22 @@ public class MenuItemDto {
     private Category category;
     private List<Customization> customizations;
     private List<MenuAddOn> addOns;
+<<<<<<< HEAD
     
 
 
+=======
+    @JsonProperty("isVegetarian")
+    private boolean isVegetarian;
+    @JsonProperty("isSpicy")
+    private boolean isSpicy;
+    @JsonProperty("spiceLevel")
+    private SpiceLevel spiceLevel;
+    @JsonProperty("isNew")
+    private boolean isNew;
+    @JsonProperty("hasAddOns")
+    private boolean hasAddOns;
+    @JsonProperty("customizable")
+    private boolean customizable;
+>>>>>>> 2a03e2046130eb5eb021b6f8f040546cb0a7ce89
 }
