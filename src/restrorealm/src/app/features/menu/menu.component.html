@@ -165,7 +165,7 @@
                         <div class="menu-card-details">
                             <div class="menu-detail-item">
                                 <span class="menu-detail-label">Category:</span>
-                                <span class="menu-detail-value">{{getCategoryName(item?.categoryId || 0)}}</span>
+                                <span class="menu-detail-value">{{getCategoryName(item?.category?.id || 0)}}</span>
                             </div>
                             <div class="menu-detail-item">
                                 <span class="menu-detail-label">Calories:</span>
@@ -251,7 +251,7 @@
                     </div>
                     
                     <div class="menu-list-cell menu-cell-category">
-                        <span class="menu-category-name">{{ getCategoryName(item?.categoryId || 0) }}</span>
+                        <span class="menu-category-name">{{ getCategoryName(item?.category?.id || 0) }}</span>
                     </div>
                     
                     <div class="menu-list-cell menu-cell-actions">
@@ -836,7 +836,7 @@
                             <div class="menu-details-info-grid">
                                 <div class="menu-details-info-item">
                                     <span class="menu-details-label">Category:</span>
-                                    <span class="menu-details-value">{{ getCategoryName(selectedItem.categoryId || 0) }}</span>
+                                    <span class="menu-details-value">{{ getCategoryName(selectedItem.category?.id || 0) }}</span>
                                 </div>
                                 <div class="menu-details-info-item">
                                     <span class="menu-details-label">Calories:</span>

@@ -1,4 +1,5 @@
 package com.letusbuild.restrorealm.service.Impl;
+
 import com.letusbuild.restrorealm.dto.OrderItemRequestDto;
 import com.letusbuild.restrorealm.dto.OrderItemResponseDto;
 import com.letusbuild.restrorealm.entity.MenuItem;
@@ -8,8 +9,8 @@ import com.letusbuild.restrorealm.repository.MenuItemRepository;
 import com.letusbuild.restrorealm.repository.OrderItemRepository;
 import com.letusbuild.restrorealm.repository.OrderRepository;
 import com.letusbuild.restrorealm.service.OrderItemService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,17 +21,16 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final MenuItemRepository menuItemRepository;
-    private final ModelMapper modelMapper;
 
     public OrderItemServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-                                MenuItemRepository menuItemRepository, ModelMapper modelMapper) {
+                                MenuItemRepository menuItemRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.menuItemRepository = menuItemRepository;
-        this.modelMapper = modelMapper;
     }
 
     @Override
+    @Transactional
     public OrderItemResponseDto addOrderItem(Long orderId, OrderItemRequestDto orderItemRequestDto) {
         // Fetch the order
         Order order = orderRepository.findById(orderId)
@@ -49,23 +49,57 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         OrderItem savedOrderItem = orderItemRepository.save(orderItem);
 
-        return modelMapper.map(savedOrderItem, OrderItemResponseDto.class);
+        // Update the order's total amount
+        double newTotal = order.getTotalAmount() + (menuItem.getBasePrice() * orderItemRequestDto.getQuantity());
+        order.setTotalAmount(newTotal);
+        orderRepository.save(order);
+
+        return convertToDto(savedOrderItem);
     }
 
     @Override
+    @Transactional
     public void removeOrderItem(Long orderItemId) {
-        if (!orderItemRepository.existsById(orderItemId)) {
-            throw new IllegalArgumentException("Order Item not found");
+        OrderItem orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Order Item not found"));
+
+        // Update the order's total amount before removing
+        Order order = orderItem.getOrder();
+        if (order != null) {
+            double itemTotal = orderItem.getPrice() * orderItem.getQuantity();
+            order.setTotalAmount(order.getTotalAmount() - itemTotal);
+            orderRepository.save(order);
         }
+
         orderItemRepository.deleteById(orderItemId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderItemResponseDto> getItemsByOrderId(Long orderId) {
         List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
         return orderItems.stream()
-                .map(item -> modelMapper.map(item, OrderItemResponseDto.class))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-}
 
+    /**
+     * Helper method to convert OrderItem entity to OrderItemResponseDto
+     */
+    private OrderItemResponseDto convertToDto(OrderItem orderItem) {
+        String menuItemName = "Unknown Item";
+        if (orderItem.getMenuItem() != null) {
+            menuItemName = orderItem.getMenuItem().getName();
+        }
+
+        Double price = orderItem.getPrice();
+        Integer quantity = orderItem.getQuantity();
+
+        return new OrderItemResponseDto(
+                menuItemName,
+                quantity,
+                price,
+                quantity * price
+        );
+    }
+}
