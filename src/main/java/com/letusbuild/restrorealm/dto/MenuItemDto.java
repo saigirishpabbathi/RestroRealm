@@ -8,7 +8,9 @@ import com.letusbuild.restrorealm.entity.MenuAddOn;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -33,11 +35,6 @@ public class MenuItemDto {
     private Category category;
     private List<Customization> customizations;
     private List<MenuAddOn> addOns;
-<<<<<<< HEAD
-    
-
-
-=======
     @JsonProperty("isVegetarian")
     private boolean isVegetarian;
     @JsonProperty("isSpicy")
@@ -50,5 +47,4 @@ public class MenuItemDto {
     private boolean hasAddOns;
     @JsonProperty("customizable")
     private boolean customizable;
->>>>>>> 2a03e2046130eb5eb021b6f8f040546cb0a7ce89
 }
