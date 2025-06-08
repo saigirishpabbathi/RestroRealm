@@ -91,7 +91,7 @@ public class PaymentServiceImpl implements PaymentService {
         Stripe.apiKey = stripeSecretKey;
 
         // Fetch Payment
-        PaymentEntity payment = (PaymentEntity) paymentRepository.findByPaymentId(refundRequest.getPaymentId())
+        PaymentEntity payment = paymentRepository.findByPaymentId(refundRequest.getPaymentId())
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
 
         // Validate that the payment is successful
